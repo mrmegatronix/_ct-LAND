@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coasters Tavern Ecosystem</title>
+  
+  <!-- Modern Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: rgba(255, 255, 255, 0.03);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --card-hover-border: rgba(255, 255, 255, 0.2);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #3b82f6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Dynamic Animated Background Blob */
+    .bg-shape {
+      position: absolute;
+      filter: blur(100px);
+      z-index: -1;
+      opacity: 0.5;
+      animation: float 20s infinite ease-in-out alternate;
+    }
+    
+    .shape-1 {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%);
+      top: -200px;
+      left: -200px;
+    }
+    
+    .shape-2 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 70%);
+      bottom: -100px;
+      right: -100px;
+      animation-delay: -5s;
+    }
+    
+    .shape-3 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #ef4444 0%, rgba(239, 68, 68, 0) 70%);
+      top: 40%;
+      left: 30%;
+      animation-duration: 25s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(100px, 50px) scale(1.2); }
+      100% { transform: translate(-50px, 100px) scale(0.9); }
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      padding: 2rem;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .header-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--card-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .header-logo img {
+      width: 100%;
+      height: 100%;
+      border-radius: 20px;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, #fff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    p.subtitle {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      margin-bottom: 4rem;
+      max-width: 600px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 2rem;
+      width: 100%;
+    }
+
+    /* Glassmorphism Cards */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      text-decoration: none;
+      color: inherit;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, transparent, transparent);
+      transition: background 0.4s;
+    }
+
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      border-color: var(--card-hover-border);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .card.matrix:hover::before { background: linear-gradient(90deg, #10b981, #34d399); }
+    .card.ctos:hover::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+    .card.post:hover::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: transform 0.3s;
+    }
+
+    .card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card.matrix .card-icon { color: #10b981; }
+    .card.ctos .card-icon { color: #3b82f6; }
+    .card.post .card-icon { color: #f59e0b; }
+
+    .card h2 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .card h2 i {
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+      color: var(--text-muted);
+    }
+
+    .card:hover h2 i {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .card p {
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-size: 1rem;
+    }
+
+    .footer {
+      margin-top: 5rem;
+      color: rgba(255,255,255,0.3);
+      font-size: 0.875rem;
+    }
+
+    @media (max-width: 768px) {
+      h1 { font-size: 2.5rem; }
+      .container { padding: 1.5rem; }
+      .card { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Dynamic Backgrounds -->
+  <div class="bg-shape shape-1"></div>
+  <div class="bg-shape shape-2"></div>
+  <div class="bg-shape shape-3"></div>
+
+  <div class="container">
+    <div class="header-logo">
+      <img src="https://placehold.co/400x400/000000/D4AF37?text=CT" alt="Coasters Tavern Logo">
+    </div>
+    
+    <h1>Coasters Tavern</h1>
+    <p class="subtitle">Unified Venue Management Ecosystem</p>
+
+    <div class="grid">
+      
+      <!-- CT-Matrix -->
+      <a href="../_ct-MATRIX/" class="card matrix">
+        <div class="card-icon">
+          <i data-lucide="network"></i>
+        </div>
+        <h2>
+          CT-Matrix
+          <i data-lucide="arrow-right"></i>
+        </h2>
+        <p>The core data grid and intelligence layer for Coasters Tavern. View analytics, cross-platform integrations, and deep system architecture.</p>
+      </a>
+
+      <!-- CTOS Beta -->
+      <a href="../_ctos-beta/" class="card ctos">
+        <div class="card-icon">
+          <i data-lucide="layout-dashboard"></i>
+        </div>
+        <h2>
+          CTOS Beta
+          <i data-lucide="arrow-right"></i>
+        </h2>
+        <p>The central Operating System dashboard. Dual-mode application for Office Management and Front of House operational workflows.</p>
+      </a>
+
+      <!-- CT-Post -->
+      <a href="../_ct-POST/" class="card post">
+        <div class="card-icon">
+          <i data-lucide="monitor-smartphone"></i>
+        </div>
+        <h2>
+          CT-Post
+          <i data-lucide="arrow-right"></i>
+        </h2>
+        <p>Advanced Point of Sale and rapid-entry interface terminal. Optimized for high-speed transactions and real-time order tracking.</p>
+      </a>
+
+    </div>
+
+    <div class="footer">
+      &copy; 2026 Coasters Tavern Systems. All rights reserved.
+    </div>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+  </script>
+</body>
+</html>
