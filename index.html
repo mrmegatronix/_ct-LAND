@@ -462,12 +462,12 @@
     </div>
   </div>
 
-  <script type="module">
+  <script>
     // Initialize Lucide Icons
     lucide.createIcons();
 
     // PIN Login Logic
-    const EXPECTED_PIN = import.meta.env.VITE_PIN || '5551';
+    const EXPECTED_PIN = '5551';
     
     // Check if already authenticated in session
     if (sessionStorage.getItem('ct-land-auth') === 'true') {
