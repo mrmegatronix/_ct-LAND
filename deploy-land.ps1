@@ -82,7 +82,7 @@ function Deploy-Target {
 }
 
 # Deploy to Raspberry Pi
-Deploy-Target -Name "Raspberry Pi" -HostStr "dietpi@192.168.1.97" -Dir "/home/dietpi/ct-LAND" -Password $RPI_PASSWORD -IP "192.168.1.97"
+Deploy-Target -Name "RaspberryPi" -HostStr "dietpi@192.168.1.97" -Dir "/home/dietpi/ct-LAND" -Password $RPI_PASSWORD -IP "192.168.1.97"
 
 # Deploy to Netbook
 Deploy-Target -Name "Netbook" -HostStr "owner@192.168.1.230" -Dir "/home/owner/ct-LAND" -Password $NETBOOK_PASSWORD -IP "192.168.1.230"
