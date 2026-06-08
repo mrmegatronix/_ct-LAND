@@ -1,0 +1,24 @@
+{
+  "name": "_ct-land",
+  "version": "1.0.0",
+  "description": "",
+  "main": "build_landing.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrmegatronix/_ct-LAND.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mrmegatronix/_ct-LAND/issues"
+  },
+  "homepage": "https://github.com/mrmegatronix/_ct-LAND#readme",
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
