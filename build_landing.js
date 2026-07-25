@@ -31,9 +31,9 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
 function buildHtml() {
     console.log('Building ct-LAND index.html...');
     
-    // Column 1: Local Signage (Matrix and Auto-dash)
-    const signageModules = ['_ct-MATRIX', '__auto-dash'];
-    const signageHtml = signageModules.map(mod => {
+    // Group 1: Loaded in Matrix
+    const matrixDirs = ['_ct-MATRIX', '_ct-ACE', '_ct-MMR', '_ct-QUIZ', '_ct-wea1', '_ct-FIR', '_ct-TIK'];
+    const matrixHtml = matrixDirs.map(mod => {
         const modDir = path.join(workspaceDir, mod);
         const htmlFiles = findHtmlFiles(modDir, mod, modDir);
         const linksHtml = htmlFiles.map(f => `<li><a href="../${mod}/${f}" target="_blank" class="mod-link"><i data-lucide="file"></i> ${f}</a></li>`).join('');
@@ -45,12 +45,18 @@ function buildHtml() {
                 ${linksHtml}
             </ul>
         </div>`;
-    }).join('');
+    }).join('') + `
+        <div class="repo-card border-blue">
+            <h3 class="repo-title text-blue"><i data-lucide="globe"></i> Social Club TV</h3>
+            <ul class="repo-links">
+                <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> TV Slides Integration</a></li>
+            </ul>
+        </div>`;
 
-    // Column 2: Operations & Portals (CTOS Beta, and CTSC External App)
-    const operationsHtml = `
+    // Group 2: Stand Alone Apps
+    const standaloneHtml = `
         <div class="repo-card border-gold">
-            <h3 class="repo-title text-gold"><i data-lucide="server"></i> _ctos-beta</h3>
+            <h3 class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta</h3>
             <ul class="repo-links">
                 <li>
                     <a href="#" onclick="const url = (window.location.protocol === 'file:') ? 'http://localhost:3000' : (window.location.protocol + '//' + window.location.hostname + ':3000'); window.open(url);" class="mod-link text-gold-hover">
@@ -59,48 +65,51 @@ function buildHtml() {
                 </li>
             </ul>
         </div>
-        <div class="repo-card border-cyan">
-            <h3 class="repo-title text-cyan"><i data-lucide="globe"></i> ctsc-app.web.app</h3>
+        <div class="repo-card border-gold">
+            <h3 class="repo-title text-gold"><i data-lucide="clock"></i> Timeclock</h3>
             <ul class="repo-links">
-                <li>
-                    <a href="https://ctsc-app.web.app/" target="_blank" class="mod-link text-cyan-hover">
-                        <i data-lucide="external-link"></i> Coasters Social Club Portal
-                    </a>
-                </li>
+                <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
+            </ul>
+        </div>
+        <div class="repo-card border-gold">
+            <h3 class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal</h3>
+            <ul class="repo-links">
+                <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal</a></li>
+                <li><a href="../_ct-SOC/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+            </ul>
+        </div>
+        <div class="repo-card border-gold">
+            <h3 class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</h3>
+            <ul class="repo-links">
+                <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
             </ul>
         </div>
     `;
 
-    // Column 3: GitHub Cloud Repositories (All other directories)
+    // Group 3: Not Used / Other
     const allDirs = fs.readdirSync(workspaceDir);
-    const gitHubHtml = allDirs.filter(d => {
+    const activeDirs = [...matrixDirs, '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND'];
+    const otherHtml = allDirs.filter(d => {
         const fullPath = path.join(workspaceDir, d);
         return fs.statSync(fullPath).isDirectory() && 
-               !signageModules.includes(d) && 
-               d !== '_ctos-beta' &&
-               !ignoreDirs.includes(d) &&
-               d !== '_ct-LAND'; // exclude self
+               !activeDirs.includes(d) && 
+               !ignoreDirs.includes(d);
     }).map(repo => {
         const repoDir = path.join(workspaceDir, repo);
         const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
         if (htmlFiles.length === 0) return '';
 
         const linksHtml = htmlFiles.map(f => {
-            const ghUrl = `https://mrmegatronix.github.io/${repo}/${f}`;
-            return `<li><a href="${ghUrl}" target="_blank" class="mod-link"><i data-lucide="external-link"></i> ${f}</a></li>`;
+            const ghUrl = `../${repo}/${f}`;
+            return `<li><a href="${ghUrl}" target="_blank" class="mod-link"><i data-lucide="file"></i> ${f}</a></li>`;
         }).join('');
 
         return `
-        <div class="accordion-item">
-            <button class="accordion-header" onclick="toggleAccordion(this)">
-                <span><i data-lucide="github"></i> ${repo}</span>
-                <i data-lucide="chevron-down" class="chevron"></i>
-            </button>
-            <div class="accordion-content">
-                <ul class="repo-links">
-                    ${linksHtml}
-                </ul>
-            </div>
+        <div class="repo-card border-cyan">
+            <h3 class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ${repo}</h3>
+            <ul class="repo-links">
+                ${linksHtml}
+            </ul>
         </div>`;
     }).join('');
 
@@ -141,37 +150,35 @@ function buildHtml() {
       font-family: 'Inter', sans-serif; 
       background: radial-gradient(circle at top right, #111827, #030712); 
       color: var(--text); 
-      min-height: 100vh; 
+      height: 100vh; 
       display: flex;
       flex-direction: column;
-    }
-    
-    @media (min-width: 1201px) {
-      body { overflow: hidden; }
+      overflow: hidden;
     }
     
     /* Header Styles */
     .header {
-      padding: 2rem 2.5rem 1rem;
+      padding: 1.5rem 2.5rem 0.5rem;
       max-width: 1800px;
       width: 100%;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
     .header-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 2.2rem;
+      font-size: 2rem;
       font-weight: 700;
       background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
     .header-subtitle {
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       color: var(--muted);
-      margin-top: 0.25rem;
+      margin-top: 0.2rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       font-weight: 600;
@@ -180,11 +187,11 @@ function buildHtml() {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 0.9rem;
       background: rgba(255,255,255,0.02);
       border: 1px solid var(--border);
       border-radius: 99px;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       color: var(--gold);
     }
@@ -200,26 +207,14 @@ function buildHtml() {
       display: grid; 
       grid-template-columns: repeat(3, 1fr);
       flex: 1;
-      padding: 1.5rem 2.5rem 2.5rem; 
+      padding: 1rem 2.5rem 2rem; 
       gap: 2rem; 
       max-width: 1800px; 
       width: 100%;
       margin: 0 auto; 
       box-sizing: border-box;
       overflow: hidden;
-    }
-    
-    @media (max-width: 1200px) {
-      .container {
-        grid-template-columns: repeat(2, 1fr);
-        height: auto;
-        overflow-y: auto;
-      }
-    }
-    @media (max-width: 768px) {
-      .container {
-        grid-template-columns: 1fr;
-      }
+      height: calc(100vh - 120px);
     }
     
     .column { 
@@ -228,21 +223,23 @@ function buildHtml() {
       background: var(--card-bg); 
       border: 1px solid var(--border); 
       border-radius: 24px; 
-      padding: 1.75rem; 
+      padding: 1.5rem; 
       overflow: hidden; 
       backdrop-filter: blur(16px);
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+      height: 100%;
     }
     .column-header { 
       font-family: 'Outfit', sans-serif; 
-      font-size: 1.4rem; 
+      font-size: 1.3rem; 
       font-weight: 600; 
-      margin-bottom: 1.25rem; 
-      padding-bottom: 1rem; 
+      margin-bottom: 1rem; 
+      padding-bottom: 0.75rem; 
       border-bottom: 1px solid var(--border); 
       display: flex; 
       align-items: center; 
       gap: 0.75rem;
+      flex-shrink: 0;
     }
     .column-content { 
       flex: 1; 
@@ -258,11 +255,11 @@ function buildHtml() {
     
     /* Links & Cards */
     .repo-card { 
-      margin-bottom: 1.5rem; 
+      margin-bottom: 1rem; 
       background: rgba(255,255,255,0.01);
       border: 1px solid var(--border);
       border-radius: 16px;
-      padding: 1.25rem;
+      padding: 1rem;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .repo-card:hover {
@@ -282,9 +279,9 @@ function buildHtml() {
 
     .repo-title { 
       font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem; 
+      font-size: 1.1rem; 
       color: #fff; 
-      margin-bottom: 0.75rem; 
+      margin-bottom: 0.5rem; 
       display: flex; 
       align-items: center; 
       gap: 0.5rem; 
@@ -293,7 +290,7 @@ function buildHtml() {
     .text-gold { color: var(--gold-hover); }
     .text-cyan { color: var(--cyan-hover); }
 
-    .repo-links { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
+    .repo-links { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
     
     .mod-link { 
       color: #94a3b8; 
@@ -301,9 +298,9 @@ function buildHtml() {
       display: flex; 
       align-items: center; 
       gap: 0.6rem; 
-      font-size: 0.9rem; 
+      font-size: 0.85rem; 
       transition: all 0.2s; 
-      padding: 8px 12px; 
+      padding: 6px 10px; 
       border-radius: 8px;
       background: rgba(255,255,255,0.01);
       border: 1px solid transparent;
@@ -318,43 +315,7 @@ function buildHtml() {
     .mod-link.text-cyan-hover:hover { color: var(--cyan-hover); }
     .mod-link.text-blue-hover:hover { color: var(--blue-hover); }
     
-    .mod-link i { width: 16px; height: 16px; opacity: 0.7; }
- 
-    /* Accordion */
-    .accordion-item { 
-      border: 1px solid var(--border); 
-      border-radius: 12px; 
-      margin-bottom: 0.75rem; 
-      background: rgba(0,0,0,0.15); 
-      overflow: hidden; 
-      transition: all 0.3s;
-    }
-    .accordion-item:hover {
-      border-color: var(--border-hover);
-    }
-    .accordion-header { 
-      width: 100%; 
-      padding: 1.1rem; 
-      background: transparent; 
-      border: none; 
-      color: #cbd5e1; 
-      text-align: left; 
-      cursor: pointer; 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
-      font-family: 'Inter', sans-serif; 
-      font-size: 0.95rem; 
-      font-weight: 500;
-      transition: all 0.2s;
-    }
-    .accordion-header:hover { background: rgba(255,255,255,0.02); color: #fff; }
-    .accordion-header span { display: flex; align-items: center; gap: 0.6rem; }
-    .accordion-header .chevron { transition: transform 0.3s; width: 16px; opacity: 0.5; }
-    .accordion-header.active { background: rgba(255,255,255,0.02); color: #fff; }
-    .accordion-header.active .chevron { transform: rotate(180deg); opacity: 1; }
-    .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-    .accordion-content .repo-links { padding: 0.75rem; border-top: 1px solid var(--border); margin: 0; background: rgba(0,0,0,0.1); }
+    .mod-link i { width: 14px; height: 14px; opacity: 0.7; }
  
     /* PIN Overlay */
     #pin-overlay { 
@@ -432,43 +393,33 @@ function buildHtml() {
   </header>
 
   <div class="container" id="main-content" style="opacity: 0; pointer-events: none; transition: opacity 0.5s;">
-    <!-- COLUMN 1 (Local Signs & Displays) -->
+    <!-- COLUMN 1: Loaded in Matrix -->
     <div class="column">
-      <div class="column-header" style="color: var(--blue);"><i data-lucide="server"></i> Local Displays</div>
+      <div class="column-header" style="color: var(--blue);"><i data-lucide="layout"></i> Loaded in Matrix</div>
       <div class="column-content">
-        ${signageHtml}
+        ${matrixHtml}
       </div>
     </div>
 
-    <!-- COLUMN 2 (Operational Portals) -->
+    <!-- COLUMN 2: Stand Alone Apps -->
     <div class="column">
-      <div class="column-header" style="color: var(--gold);"><i data-lucide="layout-grid"></i> Operations</div>
+      <div class="column-header" style="color: var(--gold);"><i data-lucide="server"></i> Stand Alone Apps</div>
       <div class="column-content">
-        ${operationsHtml}
+        ${standaloneHtml}
       </div>
     </div>
 
-    <!-- COLUMN 3 (Cloud Deployments) -->
+    <!-- COLUMN 3: Not Used / Other -->
     <div class="column">
-      <div class="column-header" style="color: var(--cyan);"><i data-lucide="cloud"></i> GitHub Cloud Modules</div>
+      <div class="column-header" style="color: var(--cyan);"><i data-lucide="folder-minus"></i> Not Used / Other</div>
       <div class="column-content">
-        ${gitHubHtml}
+        ${otherHtml}
       </div>
     </div>
   </div>
 
   <script>
     lucide.createIcons();
-
-    function toggleAccordion(btn) {
-        btn.classList.toggle("active");
-        const content = btn.nextElementSibling;
-        if (content.style.maxHeight) {
-            content.style.maxHeight = null;
-        } else {
-            content.style.maxHeight = content.scrollHeight + "px";
-        }
-    }
 
     // PIN Auth Logic
     const EXPECTED_PIN = '${EXPECTED_PIN}';
