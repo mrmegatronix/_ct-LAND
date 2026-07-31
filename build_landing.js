@@ -40,52 +40,64 @@ function buildHtml() {
 
         return `
         <div class="repo-card border-blue">
-            <h3 class="repo-title text-blue"><i data-lucide="folder"></i> ${mod}</h3>
-            <ul class="repo-links">
-                ${linksHtml}
-            </ul>
+            <details open>
+                <summary class="repo-title text-blue"><i data-lucide="folder"></i> ${mod}</summary>
+                <ul class="repo-links">
+                    ${linksHtml}
+                </ul>
+            </details>
         </div>`;
     }).join('') + `
         <div class="repo-card border-blue">
-            <h3 class="repo-title text-blue"><i data-lucide="globe"></i> Social Club TV</h3>
-            <ul class="repo-links">
-                <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> TV Slides Integration</a></li>
-            </ul>
+            <details open>
+                <summary class="repo-title text-blue"><i data-lucide="globe"></i> Social Club TV</summary>
+                <ul class="repo-links">
+                    <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> TV Slides Integration</a></li>
+                </ul>
+            </details>
         </div>`;
 
     // Group 2: Stand Alone Apps
     const standaloneHtml = `
         <div class="repo-card border-gold">
-            <h3 class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta</h3>
-            <ul class="repo-links">
-                <li>
-                    <a href="#" onclick="const url = (window.location.protocol === 'file:') ? 'http://localhost:3000' : (window.location.protocol + '//' + window.location.hostname + ':3000'); window.open(url);" class="mod-link text-gold-hover">
-                        <i data-lucide="external-link"></i> CTOS Beta (Local)
-                    </a>
-                </li>
-                <li><a href="https://mrmegatronix.github.io/_ctos-beta1/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CTOS Beta (GitHub Pages)</a></li>
-            </ul>
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta</summary>
+                <ul class="repo-links">
+                    <li>
+                        <a href="#" onclick="const url = (window.location.protocol === 'file:') ? 'http://localhost:3000' : (window.location.protocol + '//' + window.location.hostname + ':3000'); window.open(url);" class="mod-link text-gold-hover">
+                            <i data-lucide="external-link"></i> CTOS Beta (Local)
+                        </a>
+                    </li>
+                    <li><a href="https://mrmegatronix.github.io/_ctos-beta1/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CTOS Beta (GitHub Pages)</a></li>
+                </ul>
+            </details>
         </div>
         <div class="repo-card border-gold">
-            <h3 class="repo-title text-gold"><i data-lucide="clock"></i> Timeclock</h3>
-            <ul class="repo-links">
-                <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Simulator</a></li>
-                <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile App</a></li>
-                <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
-            </ul>
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="clock"></i> Timeclock</summary>
+                <ul class="repo-links">
+                    <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Simulator</a></li>
+                    <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile App</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
+                </ul>
+            </details>
         </div>
         <div class="repo-card border-gold">
-            <h3 class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal</h3>
-            <ul class="repo-links">
-                <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal</a></li>
-                <li><a href="../_ct-SOC/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-            </ul>
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal</summary>
+                <ul class="repo-links">
+                    <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal</a></li>
+                    <li><a href="../_ct-SOC/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                </ul>
+            </details>
         </div>
         <div class="repo-card border-gold">
-            <h3 class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</h3>
-            <ul class="repo-links">
-                <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-            </ul>
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</summary>
+                <ul class="repo-links">
+                    <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                </ul>
+            </details>
         </div>
     `;
 
@@ -109,10 +121,12 @@ function buildHtml() {
 
         return `
         <div class="repo-card border-cyan">
-            <h3 class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ${repo}</h3>
-            <ul class="repo-links">
-                ${linksHtml}
-            </ul>
+            <details>
+                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ${repo}</summary>
+                <ul class="repo-links">
+                    ${linksHtml}
+                </ul>
+            </details>
         </div>`;
     }).join('');
 
@@ -288,12 +302,17 @@ function buildHtml() {
       display: flex; 
       align-items: center; 
       gap: 0.5rem; 
+      cursor: pointer;
+      list-style: none; /* Hide default summary marker */
+    }
+    .repo-title::-webkit-details-marker {
+      display: none;
     }
     .text-blue { color: var(--blue-hover); }
     .text-gold { color: var(--gold-hover); }
     .text-cyan { color: var(--cyan-hover); }
 
-    .repo-links { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+    .repo-links { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.5rem; }
     
     .mod-link { 
       color: #94a3b8; 
