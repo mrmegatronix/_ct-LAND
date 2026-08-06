@@ -61,6 +61,17 @@ function buildHtml() {
     const standaloneHtml = `
         <div class="repo-card border-gold">
             <details open>
+                <summary class="repo-title text-gold"><i data-lucide="layout-dashboard"></i> AutoDash</summary>
+                <ul class="repo-links">
+                    <li><a href="../__auto-dash/index.html" target="_blank" class="mod-link"><i data-lucide="layout-dashboard"></i> Main Dashboard</a></li>
+                    <li><a href="../__auto-dash/8cam-view.html" target="_blank" class="mod-link"><i data-lucide="video"></i> Security 8-Cam (WebRTC)</a></li>
+                    <li><a href="../__auto-dash/links.html" target="_blank" class="mod-link"><i data-lucide="link"></i> Links Directory</a></li>
+                    <li><a href="https://mrmegatronix.github.io/__auto-dash/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
                 <summary class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta</summary>
                 <ul class="repo-links">
                     <li>
@@ -103,7 +114,7 @@ function buildHtml() {
 
     // Group 3: Not Used / Other
     const allDirs = fs.readdirSync(workspaceDir);
-    const activeDirs = [...matrixDirs, '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND'];
+    const activeDirs = [...matrixDirs, '__auto-dash', '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND'];
     const otherHtml = allDirs.filter(d => {
         const fullPath = path.join(workspaceDir, d);
         return fs.statSync(fullPath).isDirectory() && 
