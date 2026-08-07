@@ -47,7 +47,8 @@ function buildHtml() {
         const linksHtml = htmlFiles.map(f => {
             let label = f;
             let icon = 'file';
-            if (f === 'files.html') { label = 'Online File Browser'; icon = 'folder-tree'; }
+            if (f === 'postermaker.html') { label = 'A4 Poster Maker (Print & PDF)'; icon = 'printer'; }
+            else if (f === 'files.html') { label = 'Online File Browser'; icon = 'folder-tree'; }
             else if (f === 'masteradmin.html') { label = 'Master TV Admin Control'; icon = 'crown'; }
             else if (f === 'index.html') { label = 'Live Display Feed'; icon = 'tv'; }
             else if (f === 'billboard.html') { label = 'LED Billboard Display'; icon = 'monitor'; }
@@ -141,10 +142,12 @@ function buildHtml() {
         </div>
         <div class="repo-card border-gold">
             <details open>
-                <summary class="repo-title text-gold"><i data-lucide="folder-tree"></i> CT-Matrix File Browser</summary>
+                <summary class="repo-title text-gold"><i data-lucide="printer"></i> CT-Matrix Poster Maker & Files</summary>
                 <ul class="repo-links">
-                    <li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="layout-grid"></i> Online File Explorer</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages Browser</a></li>
+                    <li><a href="../_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="printer"></i> A4 Poster Maker Studio</a></li>
+                    <li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="folder-tree"></i> Online File Explorer</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> Live Poster Maker (GitHub Pages)</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages File Browser</a></li>
                     <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
                     <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Online IDE</a></li>
                 </ul>
