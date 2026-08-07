@@ -47,7 +47,8 @@ function buildHtml() {
         const linksHtml = htmlFiles.map(f => {
             let label = f;
             let icon = 'file';
-            if (f === 'masteradmin.html') { label = 'Master TV Admin Control'; icon = 'crown'; }
+            if (f === 'files.html') { label = 'Online File Browser'; icon = 'folder-tree'; }
+            else if (f === 'masteradmin.html') { label = 'Master TV Admin Control'; icon = 'crown'; }
             else if (f === 'index.html') { label = 'Live Display Feed'; icon = 'tv'; }
             else if (f === 'billboard.html') { label = 'LED Billboard Display'; icon = 'monitor'; }
             else if (f === 'remote.html') { label = 'Mobile TV Remote'; icon = 'smartphone'; }
@@ -56,7 +57,10 @@ function buildHtml() {
             else if (f === 'navi.html') { label = 'Matrix Navigation Hub'; icon = 'compass'; }
             else if (f === 'admin.html') { label = 'Admin Dashboard'; icon = 'settings'; }
             return `<li><a href="../${mod}/${f}" target="_blank" class="mod-link"><i data-lucide="${icon}"></i> ${label}</a></li>`;
-        }).join('');
+        }).join('') + (mod === '_ct-MATRIX' ? `
+                    <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
+                    <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Web Browser</a></li>
+        ` : '');
 
         return `
         <div class="repo-card border-blue">
@@ -132,6 +136,17 @@ function buildHtml() {
                 <ul class="repo-links">
                     <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
                     <li><a href="../_NZAGEV/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> _NZAGEV index.html</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="folder-tree"></i> CT-Matrix File Browser</summary>
+                <ul class="repo-links">
+                    <li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="layout-grid"></i> Online File Explorer</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages Browser</a></li>
+                    <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
+                    <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Online IDE</a></li>
                 </ul>
             </details>
         </div>
