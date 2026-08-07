@@ -31,12 +31,32 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
 function buildHtml() {
     console.log('Building ct-LAND index.html...');
     
-    // Group 1: Loaded in Matrix
-    const matrixDirs = ['_ct-MATRIX', '_ct-ACE', '_ct-MMR', '_ct-QUIZ', '_ct-wea1', '_ct-FIR', '_ct-TIK'];
+    // Group 1: Loaded in Matrix / TV Signage Modules
+    const matrixDirs = [
+        '_ct-MATRIX', '_ct-ACE', '_ct-MMR', '_ct-QUIZ', '_ct-wea1', '_ct-FIR', 
+        '_ct-TIK', '_ct-MID', '_ct-MOM', '_ct-NEON', '_ct-NIM', '_ct-POST', 
+        '_ct-TRIP', '_ct-TVH', '_ct-slides-logo', '_ct-digi-signage', '_ct-digi-4', 
+        '_ct-tv', '_ct-tvhost'
+    ];
+    
     const matrixHtml = matrixDirs.map(mod => {
         const modDir = path.join(workspaceDir, mod);
         const htmlFiles = findHtmlFiles(modDir, mod, modDir);
-        const linksHtml = htmlFiles.map(f => `<li><a href="../${mod}/${f}" target="_blank" class="mod-link"><i data-lucide="file"></i> ${f}</a></li>`).join('');
+        if (htmlFiles.length === 0) return '';
+        
+        const linksHtml = htmlFiles.map(f => {
+            let label = f;
+            let icon = 'file';
+            if (f === 'masteradmin.html') { label = 'Master TV Admin Control'; icon = 'crown'; }
+            else if (f === 'index.html') { label = 'Live Display Feed'; icon = 'tv'; }
+            else if (f === 'billboard.html') { label = 'LED Billboard Display'; icon = 'monitor'; }
+            else if (f === 'remote.html') { label = 'Mobile TV Remote'; icon = 'smartphone'; }
+            else if (f === 'live-commander.html') { label = 'Live Sports Commander'; icon = 'zap'; }
+            else if (f === 'loyalty-slide.html') { label = 'Loyalty & Jackpot Display'; icon = 'award'; }
+            else if (f === 'navi.html') { label = 'Matrix Navigation Hub'; icon = 'compass'; }
+            else if (f === 'admin.html') { label = 'Admin Dashboard'; icon = 'settings'; }
+            return `<li><a href="../${mod}/${f}" target="_blank" class="mod-link"><i data-lucide="${icon}"></i> ${label}</a></li>`;
+        }).join('');
 
         return `
         <div class="repo-card border-blue">
@@ -47,12 +67,12 @@ function buildHtml() {
                 </ul>
             </details>
         </div>`;
-    }).join('') + `
+    }).filter(Boolean).join('') + `
         <div class="repo-card border-blue">
             <details open>
                 <summary class="repo-title text-blue"><i data-lucide="globe"></i> Social Club TV</summary>
                 <ul class="repo-links">
-                    <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> TV Slides Integration</a></li>
+                    <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> CTSC TV Slides Integration</a></li>
                 </ul>
             </details>
         </div>`;
@@ -61,7 +81,43 @@ function buildHtml() {
     const standaloneHtml = `
         <div class="repo-card border-gold">
             <details open>
-                <summary class="repo-title text-gold"><i data-lucide="layout-dashboard"></i> AutoDash</summary>
+                <summary class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta (Operations ERP)</summary>
+                <ul class="repo-links">
+                    <li>
+                        <a href="#" onclick="const url = (window.location.protocol === 'file:') ? 'http://localhost:3000' : (window.location.protocol + '//' + window.location.hostname + ':3000'); window.open(url);" class="mod-link text-gold-hover">
+                            <i data-lucide="external-link"></i> CTOS Beta (Local Dev :3000)
+                        </a>
+                    </li>
+                    <li><a href="../_ctos-beta/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file-code"></i> CTOS Beta (Local Build)</a></li>
+                    <li><a href="../_ctos-beta/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ctos-beta1/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CTOS Beta (GitHub Pages)</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="clock"></i> CT-Clock (Timeclock & Roster)</summary>
+                <ul class="repo-links">
+                    <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="clock"></i> Timeclock Kiosk Terminal</a></li>
+                    <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile Clock-in WebApp</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CT-Clock (GitHub Pages)</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal (CTSC App)</summary>
+                <ul class="repo-links">
+                    <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal (ctsc-app.web.app)</a></li>
+                    <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="tv"></i> Live TV Slides Feed</a></li>
+                    <li><a href="../_ct-SOC/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-SOC/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="layout-dashboard"></i> AutoDash (Surveillance)</summary>
                 <ul class="repo-links">
                     <li><a href="../__auto-dash/index.html" target="_blank" class="mod-link"><i data-lucide="layout-dashboard"></i> Main Dashboard</a></li>
                     <li><a href="../__auto-dash/8cam-view.html" target="_blank" class="mod-link"><i data-lucide="video"></i> Security 8-Cam (WebRTC)</a></li>
@@ -72,41 +128,20 @@ function buildHtml() {
         </div>
         <div class="repo-card border-gold">
             <details open>
-                <summary class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta</summary>
-                <ul class="repo-links">
-                    <li>
-                        <a href="#" onclick="const url = (window.location.protocol === 'file:') ? 'http://localhost:3000' : (window.location.protocol + '//' + window.location.hostname + ':3000'); window.open(url);" class="mod-link text-gold-hover">
-                            <i data-lucide="external-link"></i> CTOS Beta (Local)
-                        </a>
-                    </li>
-                    <li><a href="https://mrmegatronix.github.io/_ctos-beta1/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CTOS Beta (GitHub Pages)</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="clock"></i> Timeclock</summary>
-                <ul class="repo-links">
-                    <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Simulator</a></li>
-                    <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile App</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal</summary>
-                <ul class="repo-links">
-                    <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal</a></li>
-                    <li><a href="../_ct-SOC/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
                 <summary class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</summary>
                 <ul class="repo-links">
                     <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                    <li><a href="../_NZAGEV/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> _NZAGEV index.html</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
+                <summary class="repo-title text-gold"><i data-lucide="hard-drive"></i> Infrastructure & Kiosks</summary>
+                <ul class="repo-links">
+                    <li><a href="../HAOS-kiosk/" target="_blank" class="mod-link"><i data-lucide="home"></i> Home Assistant Kiosk</a></li>
+                    <li><a href="../ProxmoxMaster/" target="_blank" class="mod-link"><i data-lucide="server"></i> Proxmox Master Node</a></li>
+                    <li><a href="../_ace-chase/index.html" target="_blank" class="mod-link"><i data-lucide="play-circle"></i> Ace Chase Board</a></li>
                 </ul>
             </details>
         </div>
@@ -114,7 +149,7 @@ function buildHtml() {
 
     // Group 3: Not Used / Other
     const allDirs = fs.readdirSync(workspaceDir);
-    const activeDirs = [...matrixDirs, '__auto-dash', '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND'];
+    const activeDirs = [...matrixDirs, '__auto-dash', '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase'];
     const otherHtml = allDirs.filter(d => {
         const fullPath = path.join(workspaceDir, d);
         return fs.statSync(fullPath).isDirectory() && 
