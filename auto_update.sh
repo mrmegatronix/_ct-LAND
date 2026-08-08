@@ -5,7 +5,7 @@ LOG_FILE="$HOME/auto_update.log"
 echo "--- Auto-Update Started: $(date) ---" >> $LOG_FILE
 
 # List of modules to sync
-MODULES=("__auto-dash" "_ct-MATRIX" "_ctos-beta" "_ct-LAND")
+MODULES=("__auto-dash" "_ct-MATRIX" "_ctos-beta" "_ct-LAND" "_ct-MERCH")
 
 for mod in "${MODULES[@]}"; do
     MOD_DIR="$HOME/$mod"

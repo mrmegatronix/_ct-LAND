@@ -156,6 +156,17 @@ function buildHtml() {
         </div>
         <div class="repo-card border-gold">
             <details open>
+                <summary class="repo-title text-gold"><i data-lucide="shopping-bag"></i> CT-MERCH (Official Merch Store)</summary>
+                <ul class="repo-links">
+                    <li><a href="https://ct-merch.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live Store (ct-merch.web.app)</a></li>
+                    <li><a href="../_ct-MERCH/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file-code"></i> CT-MERCH (Local Build)</a></li>
+                    <li><a href="../_ct-MERCH/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                    <li><a href="https://github.com/mrmegatronix/_ct-MERCH" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Repository</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details open>
                 <summary class="repo-title text-gold"><i data-lucide="hard-drive"></i> Infrastructure & Kiosks</summary>
                 <ul class="repo-links">
                     <li><a href="../HAOS-kiosk/" target="_blank" class="mod-link"><i data-lucide="home"></i> Home Assistant Kiosk</a></li>
@@ -168,7 +179,7 @@ function buildHtml() {
 
     // Group 3: Not Used / Other
     const allDirs = fs.readdirSync(workspaceDir);
-    const activeDirs = [...matrixDirs, '__auto-dash', '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase'];
+    const activeDirs = [...matrixDirs, '__auto-dash', '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase', '_ct-MERCH'];
     const otherHtml = allDirs.filter(d => {
         const fullPath = path.join(workspaceDir, d);
         return fs.statSync(fullPath).isDirectory() && 
