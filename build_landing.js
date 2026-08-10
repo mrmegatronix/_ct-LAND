@@ -36,7 +36,7 @@ function buildHtml() {
         '_ct-MATRIX', '_ct-ACE', '_ct-MMR', '_ct-QUIZ', '_ct-wea1', '_ct-FIR', 
         '_ct-TIK', '_ct-MID', '_ct-MOM', '_ct-NEON', '_ct-NIM', '_ct-POST', 
         '_ct-TRIP', '_ct-TVH', '_ct-slides-logo', '_ct-digi-signage', '_ct-digi-4', 
-        '_ct-tv', '_ct-tvhost'
+        '_ct-tv', '_ct-tvhost', '_ct-ROBS', '_anti-remote', '_antigravity-clock'
     ];
     
     const matrixHtml = matrixDirs.map(mod => {
