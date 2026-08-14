@@ -35,16 +35,7 @@ function buildHtml() {
     const allWorkspaceDirs = fs.readdirSync(workspaceDir);
     const standaloneAppDirs = ['_ctos-beta', '_ct-CLOCK', '_ct-SOC', '__auto-dash', '_nzagev', '_NZAGEV', '_ct-MERCH', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase'];
     
-    const matrixDirs = allWorkspaceDirs.filter(d => {
-        const fullPath = path.join(workspaceDir, d);
-        return fs.statSync(fullPath).isDirectory() && 
-               !ignoreDirs.includes(d) && 
-               !standaloneAppDirs.includes(d) &&
-               d !== '_ct-LAND' &&
-               d !== 'PowerShell_IPv4NetworkScanner' &&
-               !d.startsWith('__shadecn') &&
-               (d.startsWith('_ct-') || d.startsWith('ct-') || d.startsWith('_anti'));
-    }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    const matrixDirs = ['_ct-MATRIX'];
     
     const matrixHtml = matrixDirs.map(mod => {
         const modDir = path.join(workspaceDir, mod);
@@ -79,15 +70,7 @@ function buildHtml() {
                 </ul>
             </details>
         </div>`;
-    }).filter(Boolean).join('') + `
-        <div class="repo-card border-blue">
-            <details>
-                <summary class="repo-title text-blue"><i data-lucide="globe"></i> Social Club TV</summary>
-                <ul class="repo-links">
-                    <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> CTSC TV Slides Integration</a></li>
-                </ul>
-            </details>
-        </div>`;
+    }).filter(Boolean).join('');
 
     // Group 2: Stand Alone Apps
     const standaloneHtml = `
