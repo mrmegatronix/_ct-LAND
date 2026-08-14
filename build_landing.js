@@ -25,19 +25,26 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
             fileList.push(relPath);
         }
     }
-    return fileList;
+    return fileList.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 }
 
 function buildHtml() {
     console.log('Building ct-LAND index.html...');
     
     // Group 1: Loaded in Matrix / TV Signage Modules
-    const matrixDirs = [
-        '_ct-MATRIX', '_ct-ACE', '_ct-MMR', '_ct-QUIZ', '_ct-wea1', '_ct-FIR', 
-        '_ct-TIK', '_ct-MID', '_ct-MOM', '_ct-NEON', '_ct-NIM', '_ct-POST', 
-        '_ct-TRIP', '_ct-TVH', '_ct-slides-logo', '_ct-digi-signage', '_ct-digi-4', 
-        '_ct-tv', '_ct-tvhost', '_ct-ROBS', '_anti-remote', '_antigravity-clock'
-    ];
+    const allWorkspaceDirs = fs.readdirSync(workspaceDir);
+    const standaloneAppDirs = ['_ctos-beta', '_ct-CLOCK', '_ct-SOC', '__auto-dash', '_nzagev', '_NZAGEV', '_ct-MERCH', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase'];
+    
+    const matrixDirs = allWorkspaceDirs.filter(d => {
+        const fullPath = path.join(workspaceDir, d);
+        return fs.statSync(fullPath).isDirectory() && 
+               !ignoreDirs.includes(d) && 
+               !standaloneAppDirs.includes(d) &&
+               d !== '_ct-LAND' &&
+               d !== 'PowerShell_IPv4NetworkScanner' &&
+               !d.startsWith('__shadecn') &&
+               (d.startsWith('_ct-') || d.startsWith('ct-') || d.startsWith('_anti'));
+    }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     
     const matrixHtml = matrixDirs.map(mod => {
         const modDir = path.join(workspaceDir, mod);
@@ -65,7 +72,7 @@ function buildHtml() {
 
         return `
         <div class="repo-card border-blue">
-            <details open>
+            <details>
                 <summary class="repo-title text-blue"><i data-lucide="folder"></i> ${mod}</summary>
                 <ul class="repo-links">
                     ${linksHtml}
@@ -74,7 +81,7 @@ function buildHtml() {
         </div>`;
     }).filter(Boolean).join('') + `
         <div class="repo-card border-blue">
-            <details open>
+            <details>
                 <summary class="repo-title text-blue"><i data-lucide="globe"></i> Social Club TV</summary>
                 <ul class="repo-links">
                     <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="external-link"></i> CTSC TV Slides Integration</a></li>
@@ -85,7 +92,53 @@ function buildHtml() {
     // Group 2: Stand Alone Apps
     const standaloneHtml = `
         <div class="repo-card border-gold">
-            <details open>
+            <details>
+                <summary class="repo-title text-gold"><i data-lucide="layout-dashboard"></i> AutoDash (Cyber SOC & CCTV)</summary>
+                <ul class="repo-links">
+                    <li><a href="../__auto-dash/draft.html" target="_blank" class="mod-link"><i data-lucide="shield-alert"></i> Cyber SOC Recon Dashboard (draft.html)</a></li>
+                    <li><a href="../__auto-dash/index.html" target="_blank" class="mod-link"><i data-lucide="layout-dashboard"></i> Main Dashboard</a></li>
+                    <li><a href="../__auto-dash/8cam-view.html" target="_blank" class="mod-link"><i data-lucide="video"></i> Security 8-Cam (WebRTC)</a></li>
+                    <li><a href="../__auto-dash/links.html" target="_blank" class="mod-link"><i data-lucide="link"></i> Links Directory</a></li>
+                    <li><a href="https://mrmegatronix.github.io/__auto-dash/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details>
+                <summary class="repo-title text-gold"><i data-lucide="clock"></i> CT-Clock (Timeclock & Roster)</summary>
+                <ul class="repo-links">
+                    <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="clock"></i> Timeclock Kiosk Terminal</a></li>
+                    <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile Clock-in WebApp</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CT-Clock (GitHub Pages)</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details>
+                <summary class="repo-title text-gold"><i data-lucide="printer"></i> CT-Matrix Poster Maker & Files</summary>
+                <ul class="repo-links">
+                    <li><a href="../_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="printer"></i> A4 Poster Maker Studio</a></li>
+                    <li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="folder-tree"></i> Online File Explorer</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> Live Poster Maker (GitHub Pages)</a></li>
+                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages File Browser</a></li>
+                    <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
+                    <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Online IDE</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details>
+                <summary class="repo-title text-gold"><i data-lucide="shopping-bag"></i> CT-MERCH (Official Merch Store)</summary>
+                <ul class="repo-links">
+                    <li><a href="https://ct-merch.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live Store (ct-merch.web.app)</a></li>
+                    <li><a href="../_ct-MERCH/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file-code"></i> CT-MERCH (Local Build)</a></li>
+                    <li><a href="../_ct-MERCH/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                    <li><a href="https://github.com/mrmegatronix/_ct-MERCH" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Repository</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details>
                 <summary class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta (Operations ERP)</summary>
                 <ul class="repo-links">
                     <li>
@@ -100,17 +153,26 @@ function buildHtml() {
             </details>
         </div>
         <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="clock"></i> CT-Clock (Timeclock & Roster)</summary>
+            <details>
+                <summary class="repo-title text-gold"><i data-lucide="hard-drive"></i> Infrastructure & Kiosks</summary>
                 <ul class="repo-links">
-                    <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="clock"></i> Timeclock Kiosk Terminal</a></li>
-                    <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile Clock-in WebApp</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CT-Clock (GitHub Pages)</a></li>
+                    <li><a href="../HAOS-kiosk/" target="_blank" class="mod-link"><i data-lucide="home"></i> Home Assistant Kiosk</a></li>
+                    <li><a href="../ProxmoxMaster/" target="_blank" class="mod-link"><i data-lucide="server"></i> Proxmox Master Node</a></li>
+                    <li><a href="../_ace-chase/index.html" target="_blank" class="mod-link"><i data-lucide="play-circle"></i> Ace Chase Board</a></li>
                 </ul>
             </details>
         </div>
         <div class="repo-card border-gold">
-            <details open>
+            <details>
+                <summary class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</summary>
+                <ul class="repo-links">
+                    <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
+                    <li><a href="../_NZAGEV/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> _NZAGEV index.html</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-gold">
+            <details>
                 <summary class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal (CTSC App)</summary>
                 <ul class="repo-links">
                     <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal (ctsc-app.web.app)</a></li>
@@ -120,72 +182,19 @@ function buildHtml() {
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="layout-dashboard"></i> AutoDash (Cyber SOC & CCTV)</summary>
-                <ul class="repo-links">
-                    <li><a href="../__auto-dash/draft.html" target="_blank" class="mod-link"><i data-lucide="shield-alert"></i> Cyber SOC Recon Dashboard (draft.html)</a></li>
-                    <li><a href="../__auto-dash/index.html" target="_blank" class="mod-link"><i data-lucide="layout-dashboard"></i> Main Dashboard</a></li>
-                    <li><a href="../__auto-dash/8cam-view.html" target="_blank" class="mod-link"><i data-lucide="video"></i> Security 8-Cam (WebRTC)</a></li>
-                    <li><a href="../__auto-dash/links.html" target="_blank" class="mod-link"><i data-lucide="link"></i> Links Directory</a></li>
-                    <li><a href="https://mrmegatronix.github.io/__auto-dash/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</summary>
-                <ul class="repo-links">
-                    <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                    <li><a href="../_NZAGEV/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> _NZAGEV index.html</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="printer"></i> CT-Matrix Poster Maker & Files</summary>
-                <ul class="repo-links">
-                    <li><a href="../_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="printer"></i> A4 Poster Maker Studio</a></li>
-                    <li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="folder-tree"></i> Online File Explorer</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> Live Poster Maker (GitHub Pages)</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages File Browser</a></li>
-                    <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
-                    <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Online IDE</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="shopping-bag"></i> CT-MERCH (Official Merch Store)</summary>
-                <ul class="repo-links">
-                    <li><a href="https://ct-merch.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live Store (ct-merch.web.app)</a></li>
-                    <li><a href="../_ct-MERCH/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file-code"></i> CT-MERCH (Local Build)</a></li>
-                    <li><a href="../_ct-MERCH/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                    <li><a href="https://github.com/mrmegatronix/_ct-MERCH" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Repository</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details open>
-                <summary class="repo-title text-gold"><i data-lucide="hard-drive"></i> Infrastructure & Kiosks</summary>
-                <ul class="repo-links">
-                    <li><a href="../HAOS-kiosk/" target="_blank" class="mod-link"><i data-lucide="home"></i> Home Assistant Kiosk</a></li>
-                    <li><a href="../ProxmoxMaster/" target="_blank" class="mod-link"><i data-lucide="server"></i> Proxmox Master Node</a></li>
-                    <li><a href="../_ace-chase/index.html" target="_blank" class="mod-link"><i data-lucide="play-circle"></i> Ace Chase Board</a></li>
-                </ul>
-            </details>
-        </div>
     `;
 
     // Group 3: Not Used / Other
     const allDirs = fs.readdirSync(workspaceDir);
-    const activeDirs = [...matrixDirs, '__auto-dash', '_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_nzagev', '_NZAGEV', '_ct-LAND', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase', '_ct-MERCH'];
-    const otherHtml = allDirs.filter(d => {
+    const activeDirs = [...matrixDirs, ...standaloneAppDirs, '_ct-LAND'];
+    const otherDirs = allDirs.filter(d => {
         const fullPath = path.join(workspaceDir, d);
         return fs.statSync(fullPath).isDirectory() && 
                !activeDirs.includes(d) && 
                !ignoreDirs.includes(d);
-    }).map(repo => {
+    }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
+    
+    const otherHtml = otherDirs.map(repo => {
         const repoDir = path.join(workspaceDir, repo);
         const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
         if (htmlFiles.length === 0) return '';
