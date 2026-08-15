@@ -35,10 +35,11 @@
       font-family: 'Inter', sans-serif; 
       background: radial-gradient(circle at top right, #111827, #030712); 
       color: var(--text); 
-      height: 100vh; 
+      min-height: 100vh; 
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
     
     /* Header Styles */
@@ -98,8 +99,7 @@
       width: 100%;
       margin: 0 auto; 
       box-sizing: border-box;
-      overflow: hidden;
-      height: calc(100vh - 120px);
+      min-height: calc(100vh - 120px);
     }
     
     .column { 
@@ -130,6 +130,36 @@
       flex: 1; 
       overflow-y: auto; 
       padding-right: 0.5rem; 
+    }
+    
+    .hero-section {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 120px);
+      width: 100%;
+      padding: 2rem;
+    }
+    
+    .crowd-dj-btn {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem 3.5rem;
+      background: linear-gradient(135deg, var(--gold) 0%, #a1801c 100%);
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 700;
+      border-radius: 99px;
+      text-decoration: none;
+      box-shadow: 0 10px 30px var(--gold-glow);
+      transition: all 0.3s;
+    }
+    .crowd-dj-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+      color: #000;
     }
     
     /* Scrollbar */
@@ -284,8 +314,18 @@
     </div>
   </header>
 
-  <div class="container" id="main-content" style="opacity: 0; pointer-events: none; transition: opacity 0.5s;">
-    <!-- COLUMN 1: Loaded in Matrix -->
+  <div id="main-content" style="opacity: 0; pointer-events: none; transition: opacity 0.5s;">
+    
+    <!-- HERO SECTION -->
+    <div class="hero-section">
+        <a href="https://crowddj.nightlifr.com/?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdHJhdGVneSI6ImxpZCIsInVzZXIiOiIwN2IwYzZlNS02ZTBmLTVkOTEtOWFiYi1kMWI0OTIwNDdjZDAiLCJpZCI6IjdiMDRlYzMwMDE3MzMxZmNlNjM2YzhjNTk0OGExZGY4IiwiaWF0IjoxNzg2NzU3MTg5LCJleHAiOjE3ODY3NjQzODl9.rSfzwWdUJBCcJfznbmZZj8V91qiKXSLT0rcLZKe-2VU&s=q&server=prod" target="_blank" class="crowd-dj-btn">
+            <i data-lucide="music" style="width: 36px; height: 36px;"></i>
+            CrowdDJ Spotify Controls
+        </a>
+    </div>
+
+    <div class="container">
+      <!-- COLUMN 1: Loaded in Matrix -->
     <div class="column">
       <div class="column-header" style="color: var(--blue);"><i data-lucide="layout"></i> Loaded in Matrix</div>
       <div class="column-content">
@@ -461,7 +501,7 @@
             <details>
                 <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-MEDIA</summary>
                 <ul class="repo-links">
-                    <li><a href="../_ct-MEDIA/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-MEDIA/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
+                    <li><a href="../_ct-MEDIA/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-MEDIA/dist/show.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/show.html</a></li><li><a href="../_ct-MEDIA/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-MEDIA/show.html" target="_blank" class="mod-link"><i data-lucide="file"></i> show.html</a></li>
                 </ul>
             </details>
         </div>
