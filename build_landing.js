@@ -9,7 +9,7 @@ const outputFile = path.join(__dirname, 'index.html');
 const EXPECTED_PIN = process.env.PIN || '5551';
 const DEMO_PIN = process.env.DEMO_PIN || '0001';
 
-const ignoreDirs = ['node_modules', '.git', '.vscode', '.github', '_UNUSED', 'extra-slides', 'images', 'scratch', '_old', 'z_OLD', '_menus', '_backgrounds'];
+const ignoreDirs = ['node_modules', '.git', '.vscode', '.github', '_UNUSED', 'extra-slides', 'images', 'scratch', '_old', 'z_OLD', '_menus', '_backgrounds', '.venv', 'venv'];
 
 function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
     if (!fs.existsSync(dir)) return fileList;
@@ -18,11 +18,15 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
     for (const file of files) {
         if (ignoreDirs.includes(file)) continue;
         const filePath = path.join(dir, file);
-        if (fs.statSync(filePath).isDirectory()) {
-            findHtmlFiles(filePath, repoName, baseDir, fileList);
-        } else if (file.endsWith('.html')) {
-            const relPath = path.relative(baseDir, filePath).replace(/\\/g, '/');
-            fileList.push(relPath);
+        try {
+            if (fs.statSync(filePath).isDirectory()) {
+                findHtmlFiles(filePath, repoName, baseDir, fileList);
+            } else if (file.endsWith('.html')) {
+                const relPath = path.relative(baseDir, filePath).replace(/\\/g, '/');
+                fileList.push(relPath);
+            }
+        } catch (e) {
+            // Ignore broken symlinks or unreadable files
         }
     }
     return fileList.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
