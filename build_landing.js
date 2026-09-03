@@ -32,6 +32,16 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
     return fileList.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 }
 
+function getPreviewImage(repoPath, repoName) {
+    const images = ['preview.png', 'preview.jpg', 'cover.png', 'cover.jpg', 'screenshot.png', 'screenshot.jpg'];
+    for (const img of images) {
+        if (fs.existsSync(path.join(repoPath, img))) {
+            return `../${repoName}/${img}`;
+        }
+    }
+    return null;
+}
+
 function buildHtml() {
     console.log('Building ct-LAND index.html...');
     
@@ -45,6 +55,9 @@ function buildHtml() {
         const modDir = path.join(workspaceDir, mod);
         const htmlFiles = findHtmlFiles(modDir, mod, modDir);
         if (htmlFiles.length === 0) return '';
+        
+        const previewImg = getPreviewImage(modDir, mod);
+        const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${mod} preview" />` : '';
         
         const linksHtml = htmlFiles.map(f => {
             let label = f;
@@ -66,9 +79,15 @@ function buildHtml() {
         ` : '');
 
         return `
-        <div class="repo-card border-blue">
+        <div class="repo-card border-blue" data-repo="${mod}">
             <details>
-                <summary class="repo-title text-blue"><i data-lucide="folder"></i> ${mod}</summary>
+                <summary class="repo-title text-blue">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="${mod}" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder"></i> ${mod}
+                    </div>
+                </summary>
+                ${previewHtml}
                 <ul class="repo-links">
                     ${linksHtml}
                 </ul>
@@ -186,15 +205,24 @@ function buildHtml() {
         const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
         if (htmlFiles.length === 0) return '';
 
+        const previewImg = getPreviewImage(repoDir, repo);
+        const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${repo} preview" />` : '';
+
         const linksHtml = htmlFiles.map(f => {
             const ghUrl = `../${repo}/${f}`;
             return `<li><a href="${ghUrl}" target="_blank" class="mod-link"><i data-lucide="file"></i> ${f}</a></li>`;
         }).join('');
 
         return `
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="${repo}">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ${repo}</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="${repo}" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ${repo}
+                    </div>
+                </summary>
+                ${previewHtml}
                 <ul class="repo-links">
                     ${linksHtml}
                 </ul>
@@ -304,6 +332,15 @@ function buildHtml() {
       margin: 0 auto; 
       box-sizing: border-box;
       min-height: calc(100vh - 120px);
+    }
+    @media (max-width: 1200px) {
+      .container { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; padding: 1rem; }
+      .header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.5rem 1rem 0.5rem; }
+      .hero-section { padding: 1rem; min-height: 50vh; }
+      .crowd-dj-btn { font-size: 1.2rem; padding: 1rem 2rem; }
     }
     
     .column { 
@@ -485,6 +522,13 @@ function buildHtml() {
     .pin-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
     .pin-btn:active { transform: scale(0.95); }
     .pin-btn[data-val="clear"], .pin-btn[data-val="del"] { font-size: 1.1rem; color: var(--muted); }
+    /* Image Preview */
+    .repo-preview-img { width: 100%; border-radius: 12px; margin: 10px 0; object-fit: cover; max-height: 200px; border: 1px solid var(--border); }
+    
+    /* Manage Buttons */
+    .manage-btn { padding: 0.5rem 1rem; border-radius: 99px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); cursor: pointer; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+    .manage-btn:hover { background: rgba(255,255,255,0.1); }
+    .manage-actions { display: flex; gap: 10px; align-items: center; }
   </style>
 </head>
 <body>
@@ -512,9 +556,13 @@ function buildHtml() {
       <h1 class="header-title">CT Ecosystem Hub</h1>
       <div class="header-subtitle">Venue Operation Controls</div>
     </div>
-    <div class="pi-status" id="pi-status" style="display: none;">
-      <span class="pi-dot"></span>
-      <span>Auto-Unlocked (Pi Mode)</span>
+    <div class="manage-actions">
+        <button id="manage-links-btn" class="manage-btn"><i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links</button>
+        <button id="download-archive-btn" class="manage-btn" style="display:none; border-color: #ef4444; color: #ef4444;"><i data-lucide="download" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Save Changes</button>
+        <div class="pi-status" id="pi-status" style="display: none;">
+          <span class="pi-dot"></span>
+          <span>Auto-Unlocked</span>
+        </div>
     </div>
   </header>
 
@@ -625,6 +673,44 @@ function buildHtml() {
         } else if (e.key === 'Escape') {
             handleInput('clear');
         }
+    });
+    // Manage Links Logic
+    const manageBtn = document.getElementById('manage-links-btn');
+    const downloadBtn = document.getElementById('download-archive-btn');
+    const checkboxes = document.querySelectorAll('.repo-select-checkbox');
+    let isManageMode = false;
+
+    manageBtn.addEventListener('click', () => {
+        isManageMode = !isManageMode;
+        checkboxes.forEach(cb => cb.style.display = isManageMode ? 'inline-block' : 'none');
+        downloadBtn.style.display = isManageMode ? 'inline-flex' : 'none';
+        manageBtn.innerHTML = isManageMode ? 
+            '<i data-lucide="x" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Cancel' : 
+            '<i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links';
+        lucide.createIcons();
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+        if (selected.length === 0) {
+            alert('No links selected to remove!');
+            return;
+        }
+        
+        const data = { archiveRepos: selected };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'archive_changes.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Reset
+        manageBtn.click();
+        checkboxes.forEach(cb => cb.checked = false);
     });
   </script>
 </body>

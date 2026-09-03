@@ -101,6 +101,15 @@
       box-sizing: border-box;
       min-height: calc(100vh - 120px);
     }
+    @media (max-width: 1200px) {
+      .container { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .container { grid-template-columns: 1fr; padding: 1rem; }
+      .header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.5rem 1rem 0.5rem; }
+      .hero-section { padding: 1rem; min-height: 50vh; }
+      .crowd-dj-btn { font-size: 1.2rem; padding: 1rem 2rem; }
+    }
     
     .column { 
       display: flex; 
@@ -281,6 +290,13 @@
     .pin-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
     .pin-btn:active { transform: scale(0.95); }
     .pin-btn[data-val="clear"], .pin-btn[data-val="del"] { font-size: 1.1rem; color: var(--muted); }
+    /* Image Preview */
+    .repo-preview-img { width: 100%; border-radius: 12px; margin: 10px 0; object-fit: cover; max-height: 200px; border: 1px solid var(--border); }
+    
+    /* Manage Buttons */
+    .manage-btn { padding: 0.5rem 1rem; border-radius: 99px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); cursor: pointer; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+    .manage-btn:hover { background: rgba(255,255,255,0.1); }
+    .manage-actions { display: flex; gap: 10px; align-items: center; }
   </style>
 </head>
 <body>
@@ -308,9 +324,13 @@
       <h1 class="header-title">CT Ecosystem Hub</h1>
       <div class="header-subtitle">Venue Operation Controls</div>
     </div>
-    <div class="pi-status" id="pi-status" style="display: none;">
-      <span class="pi-dot"></span>
-      <span>Auto-Unlocked (Pi Mode)</span>
+    <div class="manage-actions">
+        <button id="manage-links-btn" class="manage-btn"><i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links</button>
+        <button id="download-archive-btn" class="manage-btn" style="display:none; border-color: #ef4444; color: #ef4444;"><i data-lucide="download" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Save Changes</button>
+        <div class="pi-status" id="pi-status" style="display: none;">
+          <span class="pi-dot"></span>
+          <span>Auto-Unlocked</span>
+        </div>
     </div>
   </header>
 
@@ -330,9 +350,15 @@
       <div class="column-header" style="color: var(--blue);"><i data-lucide="layout"></i> Loaded in Matrix</div>
       <div class="column-content">
         
-        <div class="repo-card border-blue">
+        <div class="repo-card border-blue" data-repo="_ct-MATRIX">
             <details>
-                <summary class="repo-title text-blue"><i data-lucide="folder"></i> _ct-MATRIX</summary>
+                <summary class="repo-title text-blue">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-MATRIX" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder"></i> _ct-MATRIX
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-MATRIX/billboard.html" target="_blank" class="mod-link"><i data-lucide="monitor"></i> LED Billboard Display</a></li><li><a href="../_ct-MATRIX/book.html" target="_blank" class="mod-link"><i data-lucide="file"></i> book.html</a></li><li><a href="../_ct-MATRIX/example.html" target="_blank" class="mod-link"><i data-lucide="file"></i> example.html</a></li><li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="folder-tree"></i> Online File Browser</a></li><li><a href="../_ct-MATRIX/index.html" target="_blank" class="mod-link"><i data-lucide="tv"></i> Live Display Feed</a></li><li><a href="../_ct-MATRIX/live-commander.html" target="_blank" class="mod-link"><i data-lucide="zap"></i> Live Sports Commander</a></li><li><a href="../_ct-MATRIX/loyalty-slide.html" target="_blank" class="mod-link"><i data-lucide="award"></i> Loyalty & Jackpot Display</a></li><li><a href="../_ct-MATRIX/masteradmin_DRAFT.html" target="_blank" class="mod-link"><i data-lucide="file"></i> masteradmin_DRAFT.html</a></li><li><a href="../_ct-MATRIX/masteradmin.html" target="_blank" class="mod-link"><i data-lucide="crown"></i> Master TV Admin Control</a></li><li><a href="../_ct-MATRIX/navi.html" target="_blank" class="mod-link"><i data-lucide="compass"></i> Matrix Navigation Hub</a></li><li><a href="../_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="printer"></i> A4 Poster Maker (Print & PDF)</a></li><li><a href="../_ct-MATRIX/remote.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile TV Remote</a></li><li><a href="../_ct-MATRIX/test/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> test/index.html</a></li>
                     <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
@@ -449,217 +475,407 @@
       <div class="column-header" style="color: var(--cyan);"><i data-lucide="folder-minus"></i> Not Used / Other</div>
       <div class="column-content">
         
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_anti-remote">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _anti-remote</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_anti-remote" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _anti-remote
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_anti-remote/static/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> static/index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_antigravity-clock">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _antigravity-clock</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_antigravity-clock" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _antigravity-clock
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_antigravity-clock/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-ACE">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-ACE</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-ACE" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-ACE
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-ACE/admin.html" target="_blank" class="mod-link"><i data-lucide="file"></i> admin.html</a></li><li><a href="../_ct-ACE/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-ACE/preview.html" target="_blank" class="mod-link"><i data-lucide="file"></i> preview.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-digi-4">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-digi-4</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-digi-4" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-digi-4
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-digi-4/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-digi-signage">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-digi-signage</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-digi-signage" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-digi-signage
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-digi-signage/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-FIR">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-FIR</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-FIR" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-FIR
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-FIR/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-MEDIA">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-MEDIA</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-MEDIA" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-MEDIA
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
-                    <li><a href="../_ct-MEDIA/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-MEDIA/dist/show.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/show.html</a></li><li><a href="../_ct-MEDIA/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-MEDIA/show.html" target="_blank" class="mod-link"><i data-lucide="file"></i> show.html</a></li>
+                    <li><a href="../_ct-MEDIA/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-MEDIA/dist/show.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/show.html</a></li><li><a href="../_ct-MEDIA/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-MEDIA/media.html" target="_blank" class="mod-link"><i data-lucide="file"></i> media.html</a></li><li><a href="../_ct-MEDIA/show.html" target="_blank" class="mod-link"><i data-lucide="file"></i> show.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-MID">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-MID</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-MID" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-MID
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-MID/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-MID/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-MID/mid.html" target="_blank" class="mod-link"><i data-lucide="file"></i> mid.html</a></li><li><a href="../_ct-MID/poster_all_a3_dark.html" target="_blank" class="mod-link"><i data-lucide="file"></i> poster_all_a3_dark.html</a></li><li><a href="../_ct-MID/poster_all_a3_light.html" target="_blank" class="mod-link"><i data-lucide="file"></i> poster_all_a3_light.html</a></li><li><a href="../_ct-MID/poster_all_dark.html" target="_blank" class="mod-link"><i data-lucide="file"></i> poster_all_dark.html</a></li><li><a href="../_ct-MID/poster_all.html" target="_blank" class="mod-link"><i data-lucide="file"></i> poster_all.html</a></li><li><a href="../_ct-MID/poster_menu_dark.html" target="_blank" class="mod-link"><i data-lucide="file"></i> poster_menu_dark.html</a></li><li><a href="../_ct-MID/poster_menu.html" target="_blank" class="mod-link"><i data-lucide="file"></i> poster_menu.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-MMR">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-MMR</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-MMR" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-MMR
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
-                    <li><a href="../_ct-MMR/admin.html" target="_blank" class="mod-link"><i data-lucide="file"></i> admin.html</a></li><li><a href="../_ct-MMR/archive.html" target="_blank" class="mod-link"><i data-lucide="file"></i> archive.html</a></li><li><a href="../_ct-MMR/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-MMR/remote.html" target="_blank" class="mod-link"><i data-lucide="file"></i> remote.html</a></li><li><a href="../_ct-MMR/verify.html" target="_blank" class="mod-link"><i data-lucide="file"></i> verify.html</a></li><li><a href="../_ct-MMR/waving_animation.html" target="_blank" class="mod-link"><i data-lucide="file"></i> waving_animation.html</a></li>
+                    <li><a href="../_ct-MMR/admin.html" target="_blank" class="mod-link"><i data-lucide="file"></i> admin.html</a></li><li><a href="../_ct-MMR/archive.html" target="_blank" class="mod-link"><i data-lucide="file"></i> archive.html</a></li><li><a href="../_ct-MMR/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-MMR/remote.html" target="_blank" class="mod-link"><i data-lucide="file"></i> remote.html</a></li><li><a href="../_ct-MMR/test-draw.html" target="_blank" class="mod-link"><i data-lucide="file"></i> test-draw.html</a></li><li><a href="../_ct-MMR/verify.html" target="_blank" class="mod-link"><i data-lucide="file"></i> verify.html</a></li><li><a href="../_ct-MMR/waving_animation.html" target="_blank" class="mod-link"><i data-lucide="file"></i> waving_animation.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-MOM">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-MOM</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-MOM" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-MOM
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-MOM/admin.html" target="_blank" class="mod-link"><i data-lucide="file"></i> admin.html</a></li><li><a href="../_ct-MOM/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-NEON">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-NEON</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-NEON" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-NEON
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-NEON/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-NIM">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-NIM</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-NIM" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-NIM
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-NIM/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-NIM/OLD NIM/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> OLD NIM/index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-NZAGE2">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-POST</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-NZAGE2" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-NZAGE2
+                    </div>
+                </summary>
+                
+                <ul class="repo-links">
+                    <li><a href="../_ct-NZAGE2/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-cyan" data-repo="_ct-POST">
+            <details>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-POST" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-POST
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-POST/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-POST/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-POST/old/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> old/index.html</a></li><li><a href="../_ct-POST/old/OLD NIM/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> old/OLD NIM/index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-QUIZ">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-QUIZ</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-QUIZ" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-QUIZ
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-QUIZ/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-ROBS">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-ROBS</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-ROBS" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-ROBS
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-ROBS/admin.html" target="_blank" class="mod-link"><i data-lucide="file"></i> admin.html</a></li><li><a href="../_ct-ROBS/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../_ct-ROBS/remote.html" target="_blank" class="mod-link"><i data-lucide="file"></i> remote.html</a></li><li><a href="../_ct-ROBS/verify.html" target="_blank" class="mod-link"><i data-lucide="file"></i> verify.html</a></li><li><a href="../_ct-ROBS/waving_animation.html" target="_blank" class="mod-link"><i data-lucide="file"></i> waving_animation.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-slides-logo">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-slides-logo</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-slides-logo" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-slides-logo
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-slides-logo/feature-images/baileys-logo-9A005/logo-source.html" target="_blank" class="mod-link"><i data-lucide="file"></i> feature-images/baileys-logo-9A005/logo-source.html</a></li><li><a href="../_ct-slides-logo/flame_alignment_fix.html" target="_blank" class="mod-link"><i data-lucide="file"></i> flame_alignment_fix.html</a></li><li><a href="../_ct-slides-logo/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-TIK">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-TIK</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-TIK" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-TIK
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-TIK/draft.html" target="_blank" class="mod-link"><i data-lucide="file"></i> draft.html</a></li><li><a href="../_ct-TIK/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-TRIP">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-TRIP</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-TRIP" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-TRIP
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-TRIP/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-TVH">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-TVH</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-TVH" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-TVH
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-TVH/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-tvhost">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-tvhost</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-tvhost" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-tvhost
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-tvhost/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_ct-wea1">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> _ct-wea1</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_ct-wea1" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _ct-wea1
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../_ct-wea1/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> dist/index.html</a></li><li><a href="../_ct-wea1/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="_REP-SEC">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ct-digi-signage</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="_REP-SEC" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> _REP-SEC
+                    </div>
+                </summary>
+                
+                <ul class="repo-links">
+                    <li><a href="../_REP-SEC/repsec_report.html" target="_blank" class="mod-link"><i data-lucide="file"></i> repsec_report.html</a></li><li><a href="../_REP-SEC/templates/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> templates/index.html</a></li>
+                </ul>
+            </details>
+        </div>
+        <div class="repo-card border-cyan" data-repo="ct-digi-signage">
+            <details>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="ct-digi-signage" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ct-digi-signage
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../ct-digi-signage/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="ct-digi-singage3">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ct-digi-singage3</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="ct-digi-singage3" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ct-digi-singage3
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../ct-digi-singage3/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="ct-NIM">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ct-NIM</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="ct-NIM" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ct-NIM
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../ct-NIM/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li><li><a href="../ct-NIM/OLD NIM/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> OLD NIM/index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="ct-slides">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ct-slides</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="ct-slides" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ct-slides
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../ct-slides/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="ct-slides-final">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ct-slides-final</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="ct-slides-final" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ct-slides-final
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../ct-slides-final/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
             </details>
         </div>
-        <div class="repo-card border-cyan">
+        <div class="repo-card border-cyan" data-repo="ct-weather">
             <details>
-                <summary class="repo-title text-cyan"><i data-lucide="folder-minus"></i> ct-weather</summary>
+                <summary class="repo-title text-cyan">
+                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                        <input type="checkbox" class="repo-select-checkbox" value="ct-weather" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                        <i data-lucide="folder-minus"></i> ct-weather
+                    </div>
+                </summary>
+                
                 <ul class="repo-links">
                     <li><a href="../ct-weather/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> index.html</a></li>
                 </ul>
@@ -740,6 +956,44 @@
         } else if (e.key === 'Escape') {
             handleInput('clear');
         }
+    });
+    // Manage Links Logic
+    const manageBtn = document.getElementById('manage-links-btn');
+    const downloadBtn = document.getElementById('download-archive-btn');
+    const checkboxes = document.querySelectorAll('.repo-select-checkbox');
+    let isManageMode = false;
+
+    manageBtn.addEventListener('click', () => {
+        isManageMode = !isManageMode;
+        checkboxes.forEach(cb => cb.style.display = isManageMode ? 'inline-block' : 'none');
+        downloadBtn.style.display = isManageMode ? 'inline-flex' : 'none';
+        manageBtn.innerHTML = isManageMode ? 
+            '<i data-lucide="x" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Cancel' : 
+            '<i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links';
+        lucide.createIcons();
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+        if (selected.length === 0) {
+            alert('No links selected to remove!');
+            return;
+        }
+        
+        const data = { archiveRepos: selected };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'archive_changes.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        // Reset
+        manageBtn.click();
+        checkboxes.forEach(cb => cb.checked = false);
     });
   </script>
 </body>
