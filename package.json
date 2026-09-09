@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/mrmegatronix/_ct-LAND#readme",
   "dependencies": {
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "puppeteer": "^25.10.0"
   }
 }

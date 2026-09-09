@@ -33,7 +33,11 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
 }
 
 function getPreviewImage(repoPath, repoName) {
-    const images = ['preview.png', 'preview.jpg', 'cover.png', 'cover.jpg', 'screenshot.png', 'screenshot.jpg'];
+    // Check main folder and _preview folder
+    const images = [
+        '_preview/cover.jpg', '_preview/cover.png', '_preview/preview.png',
+        'preview.png', 'preview.jpg', 'cover.png', 'cover.jpg', 'screenshot.png', 'screenshot.jpg'
+    ];
     for (const img of images) {
         if (fs.existsSync(path.join(repoPath, img))) {
             return `../${repoName}/${img}`;
