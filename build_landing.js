@@ -26,14 +26,13 @@ function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
                 fileList.push(relPath);
             }
         } catch (e) {
-            // Ignore broken symlinks or unreadable files
+            // Ignore broken symlinks
         }
     }
     return fileList.sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 }
 
 function getPreviewImage(repoPath, repoName) {
-    // Check main folder and _preview folder
     const images = [
         '_preview/cover.jpg', '_preview/cover.png', '_preview/preview.png',
         'preview.png', 'preview.jpg', 'cover.png', 'cover.jpg', 'screenshot.png', 'screenshot.jpg'
@@ -46,193 +45,69 @@ function getPreviewImage(repoPath, repoName) {
     return null;
 }
 
+function generateRepoCard(repo, borderColor, titleColor, icon) {
+    const repoDir = path.join(workspaceDir, repo);
+    const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
+    if (htmlFiles.length === 0) return '';
+    
+    const previewImg = getPreviewImage(repoDir, repo);
+    const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${repo} preview" onerror="this.style.display='none'"/>` : '';
+    
+    const linksHtml = htmlFiles.map(f => {
+        let label = f;
+        let fileIcon = 'file';
+        if (f === 'postermaker.html') { label = 'A4 Poster Maker'; fileIcon = 'printer'; }
+        else if (f === 'files.html') { label = 'File Browser'; fileIcon = 'folder-tree'; }
+        else if (f === 'masteradmin.html') { label = 'Master TV Admin'; fileIcon = 'crown'; }
+        else if (f === 'index.html') { label = 'Live Display/Index'; fileIcon = 'tv'; }
+        
+        const ghUrl = `../${repo}/${f}`;
+        return `<li><a href="${ghUrl}" target="_blank" class="mod-link"><i data-lucide="${fileIcon}"></i> ${label}</a></li>`;
+    }).join('');
+
+    return `
+    <div class="repo-card border-${borderColor}" data-repo="${repo}">
+        <details>
+            <summary class="repo-title text-${titleColor}">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <input type="checkbox" class="repo-select-checkbox" value="${repo}" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="${icon}"></i> ${repo}
+                </div>
+            </summary>
+            ${previewHtml}
+            <ul class="repo-links">
+                ${linksHtml}
+            </ul>
+        </details>
+    </div>`;
+}
+
 function buildHtml() {
     console.log('Building ct-LAND index.html...');
     
-    // Group 1: Loaded in Matrix / TV Signage Modules
-    const allWorkspaceDirs = fs.readdirSync(workspaceDir);
-    const standaloneAppDirs = ['_ctos-beta', '_ct-CLOCK', '_ct-SOC', '__auto-dash', '_nzagev', '_NZAGEV', '_ct-MERCH', 'HAOS-kiosk', 'ProxmoxMaster', '_ace-chase'];
-    
-    const matrixDirs = ['_ct-MATRIX'];
-    
-    const matrixHtml = matrixDirs.map(mod => {
-        const modDir = path.join(workspaceDir, mod);
-        const htmlFiles = findHtmlFiles(modDir, mod, modDir);
-        if (htmlFiles.length === 0) return '';
-        
-        const previewImg = getPreviewImage(modDir, mod);
-        const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${mod} preview" />` : '';
-        
-        const linksHtml = htmlFiles.map(f => {
-            let label = f;
-            let icon = 'file';
-            if (f === 'postermaker.html') { label = 'A4 Poster Maker (Print & PDF)'; icon = 'printer'; }
-            else if (f === 'files.html') { label = 'Online File Browser'; icon = 'folder-tree'; }
-            else if (f === 'masteradmin.html') { label = 'Master TV Admin Control'; icon = 'crown'; }
-            else if (f === 'index.html') { label = 'Live Display Feed'; icon = 'tv'; }
-            else if (f === 'billboard.html') { label = 'LED Billboard Display'; icon = 'monitor'; }
-            else if (f === 'remote.html') { label = 'Mobile TV Remote'; icon = 'smartphone'; }
-            else if (f === 'live-commander.html') { label = 'Live Sports Commander'; icon = 'zap'; }
-            else if (f === 'loyalty-slide.html') { label = 'Loyalty & Jackpot Display'; icon = 'award'; }
-            else if (f === 'navi.html') { label = 'Matrix Navigation Hub'; icon = 'compass'; }
-            else if (f === 'admin.html') { label = 'Admin Dashboard'; icon = 'settings'; }
-            return `<li><a href="../${mod}/${f}" target="_blank" class="mod-link"><i data-lucide="${icon}"></i> ${label}</a></li>`;
-        }).join('') + (mod === '_ct-MATRIX' ? `
-                    <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
-                    <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Web Browser</a></li>
-        ` : '');
-
-        return `
-        <div class="repo-card border-blue" data-repo="${mod}">
-            <details>
-                <summary class="repo-title text-blue">
-                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                        <input type="checkbox" class="repo-select-checkbox" value="${mod}" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                        <i data-lucide="folder"></i> ${mod}
-                    </div>
-                </summary>
-                ${previewHtml}
-                <ul class="repo-links">
-                    ${linksHtml}
-                </ul>
-            </details>
-        </div>`;
-    }).filter(Boolean).join('');
-
-    // Group 2: Stand Alone Apps
-    const standaloneHtml = `
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="layout-dashboard"></i> AutoDash (Cyber SOC & CCTV)</summary>
-                <ul class="repo-links">
-                    <li><a href="../__auto-dash/draft.html" target="_blank" class="mod-link"><i data-lucide="shield-alert"></i> Cyber SOC Recon Dashboard (draft.html)</a></li>
-                    <li><a href="../__auto-dash/index.html" target="_blank" class="mod-link"><i data-lucide="layout-dashboard"></i> Main Dashboard</a></li>
-                    <li><a href="../__auto-dash/8cam-view.html" target="_blank" class="mod-link"><i data-lucide="video"></i> Security 8-Cam (WebRTC)</a></li>
-                    <li><a href="../__auto-dash/links.html" target="_blank" class="mod-link"><i data-lucide="link"></i> Links Directory</a></li>
-                    <li><a href="https://mrmegatronix.github.io/__auto-dash/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="clock"></i> CT-Clock (Timeclock & Roster)</summary>
-                <ul class="repo-links">
-                    <li><a href="../_ct-CLOCK/index.html" target="_blank" class="mod-link"><i data-lucide="clock"></i> Timeclock Kiosk Terminal</a></li>
-                    <li><a href="../_ct-CLOCK/mobile.html" target="_blank" class="mod-link"><i data-lucide="smartphone"></i> Mobile Clock-in WebApp</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-CLOCK/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CT-Clock (GitHub Pages)</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="printer"></i> CT-Matrix Poster Maker & Files</summary>
-                <ul class="repo-links">
-                    <li><a href="../_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="printer"></i> A4 Poster Maker Studio</a></li>
-                    <li><a href="../_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="folder-tree"></i> Online File Explorer</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/postermaker.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> Live Poster Maker (GitHub Pages)</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-MATRIX/files.html" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages File Browser</a></li>
-                    <li><a href="https://github.com/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Online File Tree</a></li>
-                    <li><a href="https://github.dev/mrmegatronix/_ct-MATRIX" target="_blank" class="mod-link"><i data-lucide="code-2"></i> VS Code Online IDE</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="shopping-bag"></i> CT-MERCH (Official Merch Store)</summary>
-                <ul class="repo-links">
-                    <li><a href="https://ct-merch.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live Store (ct-merch.web.app)</a></li>
-                    <li><a href="../_ct-MERCH/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file-code"></i> CT-MERCH (Local Build)</a></li>
-                    <li><a href="../_ct-MERCH/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                    <li><a href="https://github.com/mrmegatronix/_ct-MERCH" target="_blank" class="mod-link"><i data-lucide="github"></i> GitHub Repository</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="server"></i> CTOS Beta (Operations ERP)</summary>
-                <ul class="repo-links">
-                    <li>
-                        <a href="#" onclick="const url = (window.location.protocol === 'file:') ? 'http://localhost:3000' : (window.location.protocol + '//' + window.location.hostname + ':3000'); window.open(url);" class="mod-link text-gold-hover">
-                            <i data-lucide="external-link"></i> CTOS Beta (Local Dev :3000)
-                        </a>
-                    </li>
-                    <li><a href="../_ctos-beta/dist/index.html" target="_blank" class="mod-link"><i data-lucide="file-code"></i> CTOS Beta (Local Build)</a></li>
-                    <li><a href="../_ctos-beta/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ctos-beta1/" target="_blank" class="mod-link"><i data-lucide="globe"></i> CTOS Beta (GitHub Pages)</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="hard-drive"></i> Infrastructure & Kiosks</summary>
-                <ul class="repo-links">
-                    <li><a href="../HAOS-kiosk/" target="_blank" class="mod-link"><i data-lucide="home"></i> Home Assistant Kiosk</a></li>
-                    <li><a href="../ProxmoxMaster/" target="_blank" class="mod-link"><i data-lucide="server"></i> Proxmox Master Node</a></li>
-                    <li><a href="../_ace-chase/index.html" target="_blank" class="mod-link"><i data-lucide="play-circle"></i> Ace Chase Board</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="zap"></i> NZAG EV Portal</summary>
-                <ul class="repo-links">
-                    <li><a href="../_nzagev/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                    <li><a href="../_NZAGEV/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> _NZAGEV index.html</a></li>
-                </ul>
-            </details>
-        </div>
-        <div class="repo-card border-gold">
-            <details>
-                <summary class="repo-title text-gold"><i data-lucide="users"></i> Social Club Portal (CTSC App)</summary>
-                <ul class="repo-links">
-                    <li><a href="https://ctsc-app.web.app/" target="_blank" class="mod-link"><i data-lucide="external-link"></i> Live App Portal (ctsc-app.web.app)</a></li>
-                    <li><a href="https://ctsc-app.web.app/#/tv" target="_blank" class="mod-link"><i data-lucide="tv"></i> Live TV Slides Feed</a></li>
-                    <li><a href="../_ct-SOC/index.html" target="_blank" class="mod-link"><i data-lucide="file"></i> Local index.html</a></li>
-                    <li><a href="https://mrmegatronix.github.io/_ct-SOC/" target="_blank" class="mod-link"><i data-lucide="globe"></i> GitHub Pages</a></li>
-                </ul>
-            </details>
-        </div>
-    `;
-
-    // Group 3: Not Used / Other
     const allDirs = fs.readdirSync(workspaceDir);
-    const activeDirs = [...matrixDirs, ...standaloneAppDirs, '_ct-LAND'];
-    const otherDirs = allDirs.filter(d => {
-        const fullPath = path.join(workspaceDir, d);
-        return fs.statSync(fullPath).isDirectory() && 
-               !activeDirs.includes(d) && 
-               !ignoreDirs.includes(d);
-    }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
     
-    const otherHtml = otherDirs.map(repo => {
-        const repoDir = path.join(workspaceDir, repo);
-        const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
-        if (htmlFiles.length === 0) return '';
+    // Filter to ONLY CT repos (must contain ct or be _ctos-beta)
+    const ctRepos = allDirs.filter(d => {
+        const fullPath = path.join(workspaceDir, d);
+        if (!fs.statSync(fullPath).isDirectory() || ignoreDirs.includes(d) || d === '_ct-LAND' || d === 'ndm-LAND') return false;
+        
+        const lower = d.toLowerCase();
+        if (lower.includes('ct') || lower === '_ctos-beta') {
+            return true;
+        }
+        return false;
+    }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
-        const previewImg = getPreviewImage(repoDir, repo);
-        const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${repo} preview" />` : '';
-
-        const linksHtml = htmlFiles.map(f => {
-            const ghUrl = `../${repo}/${f}`;
-            return `<li><a href="${ghUrl}" target="_blank" class="mod-link"><i data-lucide="file"></i> ${f}</a></li>`;
-        }).join('');
-
-        return `
-        <div class="repo-card border-cyan" data-repo="${repo}">
-            <details>
-                <summary class="repo-title text-cyan">
-                    <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                        <input type="checkbox" class="repo-select-checkbox" value="${repo}" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                        <i data-lucide="folder-minus"></i> ${repo}
-                    </div>
-                </summary>
-                ${previewHtml}
-                <ul class="repo-links">
-                    ${linksHtml}
-                </ul>
-            </details>
-        </div>`;
-    }).join('');
+    // Grouping
+    const matrixModules = ['_ct-MMR', '_ct-ACE', '_ct-TRIP', '_ct-TIK', '_ct-wea1', '_ct-MATRIX'];
+    const ctosModules = ['_ct-CLOCK', '_ctos-beta'];
+    const otherKnown = ['_ct-SOC', '_ct-MERCH'];
+    
+    const matrixHtml = ctRepos.filter(r => matrixModules.includes(r)).map(repo => generateRepoCard(repo, 'blue', 'blue', 'layout')).join('');
+    const ctosHtml = ctRepos.filter(r => ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'gold', 'gold', 'server')).join('');
+    
+    const otherHtml = ctRepos.filter(r => !matrixModules.includes(r) && !ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'cyan', 'cyan', 'folder-minus')).join('');
 
     const template = `<!DOCTYPE html>
 <html lang="en">
@@ -244,295 +119,71 @@ function buildHtml() {
   <script src="https://unpkg.com/lucide@latest"></script>
   <style>
     :root {
-      --bg: #0b0f19;
-      --card-bg: rgba(255, 255, 255, 0.02);
-      --card-hover: rgba(255, 255, 255, 0.04);
-      --border: rgba(255, 255, 255, 0.06);
-      --border-hover: rgba(255, 255, 255, 0.12);
-      --text: #f1f5f9;
-      --muted: #64748b;
+      --bg: #0b0f19; --card-bg: rgba(255, 255, 255, 0.02); --card-hover: rgba(255, 255, 255, 0.04);
+      --border: rgba(255, 255, 255, 0.06); --border-hover: rgba(255, 255, 255, 0.12);
+      --text: #f1f5f9; --muted: #64748b;
       
-      --blue: #3b82f6;
-      --blue-glow: rgba(59, 130, 246, 0.15);
-      --blue-hover: #60a5fa;
-      
-      --gold: #d4af37;
-      --gold-glow: rgba(212, 175, 55, 0.15);
-      --gold-hover: #f59e0b;
-      
-      --cyan: #06b6d4;
-      --cyan-glow: rgba(6, 182, 212, 0.15);
-      --cyan-hover: #22d3ee;
+      --blue: #3b82f6; --blue-glow: rgba(59, 130, 246, 0.15); --blue-hover: #60a5fa;
+      --gold: #d4af37; --gold-glow: rgba(212, 175, 55, 0.15); --gold-hover: #f59e0b;
+      --cyan: #06b6d4; --cyan-glow: rgba(6, 182, 212, 0.15); --cyan-hover: #22d3ee;
     }
-    
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: radial-gradient(circle at top right, #111827, #030712); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; overflow-y: auto; }
     
-    body { 
-      font-family: 'Inter', sans-serif; 
-      background: radial-gradient(circle at top right, #111827, #030712); 
-      color: var(--text); 
-      min-height: 100vh; 
-      display: flex;
-      flex-direction: column;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
+    .header { padding: 1.5rem 2.5rem 0.5rem; max-width: 1800px; width: 100%; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    .header-title { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, #fff 30%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .header-subtitle { font-size: 0.8rem; color: var(--muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
     
-    /* Header Styles */
-    .header {
-      padding: 1.5rem 2.5rem 0.5rem;
-      max-width: 1800px;
-      width: 100%;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-    }
-    .header-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .header-subtitle {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 0.2rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-weight: 600;
-    }
-    .pi-status {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.9rem;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid var(--border);
-      border-radius: 99px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--gold);
-    }
-    .pi-dot {
-      width: 8px;
-      height: 8px;
-      background: #10b981;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #10b981;
-    }
+    .container { display: grid; grid-template-columns: repeat(3, 1fr); flex: 1; padding: 1rem 2.5rem 2rem; gap: 2rem; max-width: 1800px; width: 100%; margin: 0 auto; box-sizing: border-box; min-height: calc(100vh - 120px); }
+    @media (max-width: 1200px) { .container { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 768px) { .container { grid-template-columns: 1fr; padding: 1rem; } .header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.5rem 1rem 0.5rem; } .hero-section { min-height: 50vh; } }
+    
+    .column { display: flex; flex-direction: column; background: var(--card-bg); border: 1px solid var(--border); border-radius: 24px; padding: 1.5rem; overflow: hidden; backdrop-filter: blur(16px); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4); height: 100%; }
+    .column-header { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 0.75rem; flex-shrink: 0; }
+    .column-content { flex: 1; overflow-y: auto; padding-right: 0.5rem; }
+    
+    .hero-section { display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 120px); width: 100%; padding: 2rem; }
+    .crowd-dj-btn { display: flex; align-items: center; gap: 1rem; padding: 1.5rem 3.5rem; background: linear-gradient(135deg, var(--gold) 0%, #a1801c 100%); color: #000; font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 700; border-radius: 99px; text-decoration: none; box-shadow: 0 10px 30px var(--gold-glow); transition: all 0.3s; }
+    .crowd-dj-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4); color: #000; }
+    @media (max-width: 768px) { .crowd-dj-btn { font-size: 1.2rem; padding: 1rem 2rem; } }
+    
+    ::-webkit-scrollbar { width: 24px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 20px; border: 6px solid var(--card-bg); } ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+    
+    .repo-card { margin-bottom: 1rem; background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 16px; padding: 1rem; transition: all 0.3s; }
+    .repo-card:hover { transform: translateY(-2px); background: var(--card-hover); border-color: var(--border-hover); }
+    .repo-card.border-blue { border-left: 4px solid var(--blue); } .repo-card.border-blue:hover { box-shadow: 0 0 20px var(--blue-glow); }
+    .repo-card.border-gold { border-left: 4px solid var(--gold); } .repo-card.border-gold:hover { box-shadow: 0 0 20px var(--gold-glow); }
+    .repo-card.border-cyan { border-left: 4px solid var(--cyan); } .repo-card.border-cyan:hover { box-shadow: 0 0 20px var(--cyan-glow); }
 
-    .container { 
-      display: grid; 
-      grid-template-columns: repeat(3, 1fr);
-      flex: 1;
-      padding: 1rem 2.5rem 2rem; 
-      gap: 2rem; 
-      max-width: 1800px; 
-      width: 100%;
-      margin: 0 auto; 
-      box-sizing: border-box;
-      min-height: calc(100vh - 120px);
-    }
-    @media (max-width: 1200px) {
-      .container { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 768px) {
-      .container { grid-template-columns: 1fr; padding: 1rem; }
-      .header { flex-direction: column; align-items: flex-start; gap: 1rem; padding: 1.5rem 1rem 0.5rem; }
-      .hero-section { padding: 1rem; min-height: 50vh; }
-      .crowd-dj-btn { font-size: 1.2rem; padding: 1rem 2rem; }
-    }
-    
-    .column { 
-      display: flex; 
-      flex-direction: column; 
-      background: var(--card-bg); 
-      border: 1px solid var(--border); 
-      border-radius: 24px; 
-      padding: 1.5rem; 
-      overflow: hidden; 
-      backdrop-filter: blur(16px);
-      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
-      height: 100%;
-    }
-    .column-header { 
-      font-family: 'Outfit', sans-serif; 
-      font-size: 1.3rem; 
-      font-weight: 600; 
-      margin-bottom: 1rem; 
-      padding-bottom: 0.75rem; 
-      border-bottom: 1px solid var(--border); 
-      display: flex; 
-      align-items: center; 
-      gap: 0.75rem;
-      flex-shrink: 0;
-    }
-    .column-content { 
-      flex: 1; 
-      overflow-y: auto; 
-      padding-right: 0.5rem; 
-    }
-    
-    .hero-section {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: calc(100vh - 120px);
-      width: 100%;
-      padding: 2rem;
-    }
-    
-    .crowd-dj-btn {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.5rem 3.5rem;
-      background: linear-gradient(135deg, var(--gold) 0%, #a1801c 100%);
-      color: #000;
-      font-family: 'Outfit', sans-serif;
-      font-size: 2.2rem;
-      font-weight: 700;
-      border-radius: 99px;
-      text-decoration: none;
-      box-shadow: 0 10px 30px var(--gold-glow);
-      transition: all 0.3s;
-    }
-    .crowd-dj-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
-      color: #000;
-    }
-    
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 24px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 20px; border: 6px solid var(--card-bg); }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
-    
-    /* Links & Cards */
-    .repo-card { 
-      margin-bottom: 1rem; 
-      background: rgba(255,255,255,0.01);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1rem;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .repo-card:hover {
-      transform: translateY(-2px);
-      background: var(--card-hover);
-      border-color: var(--border-hover);
-    }
-    
-    .repo-card.border-blue { border-left: 4px solid var(--blue); }
-    .repo-card.border-blue:hover { box-shadow: 0 0 20px var(--blue-glow); }
-    
-    .repo-card.border-gold { border-left: 4px solid var(--gold); }
-    .repo-card.border-gold:hover { box-shadow: 0 0 20px var(--gold-glow); }
-    
-    .repo-card.border-cyan { border-left: 4px solid var(--cyan); }
-    .repo-card.border-cyan:hover { box-shadow: 0 0 20px var(--cyan-glow); }
-
-    .repo-title { 
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.2rem; 
-      color: #fff; 
-      padding: 12px 6px; 
-      margin-bottom: 0.5rem; 
-      display: flex; 
-      align-items: center; 
-      gap: 0.5rem; 
-      cursor: pointer;
-      list-style: none; /* Hide default summary marker */
-    }
-    .repo-title::-webkit-details-marker {
-      display: none;
-    }
-    .text-blue { color: var(--blue-hover); }
-    .text-gold { color: var(--gold-hover); }
-    .text-cyan { color: var(--cyan-hover); }
+    .repo-title { font-family: 'Outfit', sans-serif; font-size: 1.2rem; color: #fff; padding: 12px 6px; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; cursor: pointer; list-style: none; }
+    .repo-title::-webkit-details-marker { display: none; }
+    .text-blue { color: var(--blue-hover); } .text-gold { color: var(--gold-hover); } .text-cyan { color: var(--cyan-hover); }
 
     .repo-links { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; margin-top: 0.5rem; }
-    
-    .mod-link { 
-      color: #94a3b8; 
-      text-decoration: none; 
-      display: flex; 
-      align-items: center; 
-      gap: 0.8rem; 
-      font-size: 1rem; 
-      transition: all 0.2s; 
-      padding: 14px 16px; 
-      border-radius: 12px;
-      background: rgba(255,255,255,0.02);
-      border: 1px solid rgba(255,255,255,0.03);
-      margin-bottom: 4px;
-    }
-    .mod-link:hover { 
-      color: #fff; 
-      background: rgba(255,255,255,0.06); 
-      border-color: rgba(255,255,255,0.1);
-      transform: translateX(4px);
-    }
-    .mod-link.text-gold-hover:hover { color: var(--gold-hover); }
-    .mod-link.text-cyan-hover:hover { color: var(--cyan-hover); }
-    .mod-link.text-blue-hover:hover { color: var(--blue-hover); }
-    
+    .mod-link { color: #94a3b8; text-decoration: none; display: flex; align-items: center; gap: 0.8rem; font-size: 1rem; transition: all 0.2s; padding: 14px 16px; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); margin-bottom: 4px; }
+    .mod-link:hover { color: #fff; background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); transform: translateX(4px); }
     .mod-link i { width: 14px; height: 14px; opacity: 0.7; }
- 
-    /* PIN Overlay */
-    #pin-overlay { 
-      position: fixed; 
-      inset: 0; 
-      background: rgba(7, 10, 19, 0.96); 
-      backdrop-filter: blur(20px); 
-      z-index: 100; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-    }
-    .pin-modal { 
-      background: rgba(255, 255, 255, 0.02); 
-      border: 1px solid var(--border); 
-      border-radius: 28px; 
-      padding: 3rem; 
-      width: 380px; 
-      text-align: center; 
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    }
+    
+    .repo-preview-img { width: 100%; border-radius: 12px; margin: 10px 0; object-fit: cover; max-height: 200px; border: 1px solid var(--border); }
+    
+    .manage-btn { padding: 0.5rem 1rem; border-radius: 99px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); cursor: pointer; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
+    .manage-btn:hover { background: rgba(255,255,255,0.1); }
+    .manage-actions { display: flex; gap: 10px; align-items: center; }
+
+    #pin-overlay { position: fixed; inset: 0; background: rgba(7, 10, 19, 0.96); backdrop-filter: blur(20px); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .pin-modal { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 28px; padding: 3rem; width: 380px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
     .pin-display { display: flex; gap: 1.25rem; justify-content: center; margin: 2.5rem 0; }
     .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; }
     .pin-dot.filled { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
     .pin-dot.error { background: #ef4444; border-color: #ef4444; box-shadow: 0 0 10px #ef4444; }
     .pin-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
-    .pin-btn { 
-      aspect-ratio: 1.1; 
-      border-radius: 16px; 
-      border: 1px solid rgba(255,255,255,0.03); 
-      background: rgba(255,255,255,0.02); 
-      color: #fff; 
-      font-size: 1.6rem; 
-      font-weight: 600;
-      cursor: pointer; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center; 
-      transition: all 0.2s; 
-    }
+    .pin-btn { aspect-ratio: 1.1; border-radius: 16px; border: 1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.02); color: #fff; font-size: 1.6rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
     .pin-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
     .pin-btn:active { transform: scale(0.95); }
     .pin-btn[data-val="clear"], .pin-btn[data-val="del"] { font-size: 1.1rem; color: var(--muted); }
-    /* Image Preview */
-    .repo-preview-img { width: 100%; border-radius: 12px; margin: 10px 0; object-fit: cover; max-height: 200px; border: 1px solid var(--border); }
     
-    /* Manage Buttons */
-    .manage-btn { padding: 0.5rem 1rem; border-radius: 99px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); cursor: pointer; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
-    .manage-btn:hover { background: rgba(255,255,255,0.1); }
-    .manage-actions { display: flex; gap: 10px; align-items: center; }
+    .pi-status { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 99px; font-size: 0.75rem; font-weight: 600; color: var(--gold); }
+    .pi-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; }
   </style>
 </head>
 <body>
@@ -554,7 +205,6 @@ function buildHtml() {
     </div>
   </div>
 
-  <!-- Header -->
   <header class="header">
     <div>
       <h1 class="header-title">CT Ecosystem Hub</h1>
@@ -572,7 +222,6 @@ function buildHtml() {
 
   <div id="main-content" style="opacity: 0; pointer-events: none; transition: opacity 0.5s;">
     
-    <!-- HERO SECTION -->
     <div class="hero-section">
         <a href="https://app.nightlifr.com/?lid=07b0c6e5-6e0f-5d91-9abb-d1b492047cd0&t=1786661576564&s=q" target="_blank" class="crowd-dj-btn">
             <i data-lucide="music" style="width: 36px; height: 36px;"></i>
@@ -581,27 +230,25 @@ function buildHtml() {
     </div>
 
     <div class="container">
-      <!-- COLUMN 1: Loaded in Matrix -->
-    <div class="column">
-      <div class="column-header" style="color: var(--blue);"><i data-lucide="layout"></i> Loaded in Matrix</div>
-      <div class="column-content">
-        ${matrixHtml}
+      <div class="column">
+        <div class="column-header" style="color: var(--blue);"><i data-lucide="layout"></i> CT-Matrix & Modules</div>
+        <div class="column-content">
+          ${matrixHtml}
+        </div>
       </div>
-    </div>
 
-    <!-- COLUMN 2: Stand Alone Apps -->
-    <div class="column">
-      <div class="column-header" style="color: var(--gold);"><i data-lucide="server"></i> Stand Alone Apps</div>
-      <div class="column-content">
-        ${standaloneHtml}
+      <div class="column">
+        <div class="column-header" style="color: var(--gold);"><i data-lucide="server"></i> CTOS-Beta & Ops</div>
+        <div class="column-content">
+          ${ctosHtml}
+        </div>
       </div>
-    </div>
 
-    <!-- COLUMN 3: Not Used / Other -->
-    <div class="column">
-      <div class="column-header" style="color: var(--cyan);"><i data-lucide="folder-minus"></i> Not Used / Other</div>
-      <div class="column-content">
-        ${otherHtml}
+      <div class="column">
+        <div class="column-header" style="color: var(--cyan);"><i data-lucide="folder-minus"></i> CT-SOC & Other Apps</div>
+        <div class="column-content">
+          ${otherHtml}
+        </div>
       </div>
     </div>
   </div>
@@ -609,7 +256,6 @@ function buildHtml() {
   <script>
     lucide.createIcons();
 
-    // PIN Auth Logic
     const EXPECTED_PIN = '${EXPECTED_PIN}';
     const DEMO_PIN = '${DEMO_PIN}';
     let currentPin = '';
@@ -618,14 +264,11 @@ function buildHtml() {
     const main = document.getElementById('main-content');
     const piStatus = document.getElementById('pi-status');
 
-    // Auto unlock on Pi/Localhost/File protocol
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '192.168.1.97';
     const isFileProtocol = window.location.protocol === 'file:';
 
     if (sessionStorage.getItem('ct-land-auth') === 'true' || isLocalhost || isFileProtocol) {
-        if (isLocalhost || isFileProtocol) {
-            piStatus.style.display = 'flex';
-        }
+        if (isLocalhost || isFileProtocol) piStatus.style.display = 'flex';
         unlock();
     }
 
@@ -648,7 +291,6 @@ function buildHtml() {
         else if (currentPin.length < 4) currentPin += val;
         
         updateDisplay();
-
         if (currentPin.length === 4) {
             if (currentPin === EXPECTED_PIN || currentPin === DEMO_PIN) {
                 sessionStorage.setItem('ct-land-auth', 'true');
@@ -660,25 +302,17 @@ function buildHtml() {
         }
     }
 
-    // Keypad Clicks
     document.querySelectorAll('.pin-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            handleInput(e.currentTarget.getAttribute('data-val'));
-        });
+        btn.addEventListener('click', (e) => handleInput(e.currentTarget.getAttribute('data-val')));
     });
 
-    // Keyboard support
     document.addEventListener('keydown', (e) => {
         if (overlay.style.display === 'none') return;
-        if (e.key >= '0' && e.key <= '9') {
-            handleInput(e.key);
-        } else if (e.key === 'Backspace') {
-            handleInput('del');
-        } else if (e.key === 'Escape') {
-            handleInput('clear');
-        }
+        if (e.key >= '0' && e.key <= '9') handleInput(e.key);
+        else if (e.key === 'Backspace') handleInput('del');
+        else if (e.key === 'Escape') handleInput('clear');
     });
-    // Manage Links Logic
+
     const manageBtn = document.getElementById('manage-links-btn');
     const downloadBtn = document.getElementById('download-archive-btn');
     const checkboxes = document.querySelectorAll('.repo-select-checkbox');
@@ -696,10 +330,7 @@ function buildHtml() {
 
     downloadBtn.addEventListener('click', () => {
         const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-        if (selected.length === 0) {
-            alert('No links selected to remove!');
-            return;
-        }
+        if (selected.length === 0) { alert('No links selected to remove!'); return; }
         
         const data = { archiveRepos: selected };
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -712,7 +343,6 @@ function buildHtml() {
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
         
-        // Reset
         manageBtn.click();
         checkboxes.forEach(cb => cb.checked = false);
     });
@@ -721,7 +351,7 @@ function buildHtml() {
 </html>`;
 
     fs.writeFileSync(outputFile, template);
-    console.log('Successfully generated index.html');
+    console.log('Successfully generated ct-LAND index.html');
 }
 
 buildHtml();

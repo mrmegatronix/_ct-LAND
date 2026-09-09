@@ -39,7 +39,7 @@ async function generatePreviews() {
         if (ignoreDirs.includes(repo)) continue;
         
         const repoPath = path.join(workspaceDir, repo);
-        if (!fs.statSync(repoPath).isDirectory() || repo === '_ct-LAND') continue;
+        if (!fs.statSync(repoPath).isDirectory() || repo === '_ct-LAND' || repo === 'ndm-LAND') continue;
 
         const htmlFiles = findHtmlFiles(repoPath, repo, repoPath);
         if (htmlFiles.length === 0) continue;
