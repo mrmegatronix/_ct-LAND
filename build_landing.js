@@ -6,7 +6,8 @@ const workspaceDir = path.resolve(__dirname, '..');
 const outputFile = path.join(__dirname, 'index.html');
 
 // PIN configurations
-const EXPECTED_PIN = process.env.PIN || '5551';
+const EXPECTED_PIN = process.env.PIN || '791355';
+const EXPECTED_HASH = simpleHash(EXPECTED_PIN);
 const DEMO_PIN = process.env.DEMO_PIN || '0001';
 
 const ignoreDirs = ['node_modules', '.git', '.vscode', '.github', '_UNUSED', 'extra-slides', 'images', 'scratch', '_old', 'z_OLD', '_menus', '_backgrounds', '.venv', 'venv'];
@@ -80,6 +81,16 @@ function generateRepoCard(repo, borderColor, titleColor, icon) {
             </ul>
         </details>
     </div>`;
+}
+
+function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return hash.toString();
 }
 
 function buildHtml() {
@@ -194,7 +205,7 @@ function buildHtml() {
       <h2 style="font-family: Outfit; margin-bottom: 0.5rem; font-size: 1.8rem; font-weight: 700; color: #fff;">Access Hub</h2>
       <p style="color: var(--muted); font-size: 0.95rem; font-weight: 500;">Enter PIN to Unlock</p>
       <div class="pin-display">
-        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
       </div>
       <div class="pin-numpad">
         <button class="pin-btn" data-val="1">1</button><button class="pin-btn" data-val="2">2</button><button class="pin-btn" data-val="3">3</button>
@@ -255,9 +266,17 @@ function buildHtml() {
 
   <script>
     lucide.createIcons();
+    function simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return hash.toString();
+    }
 
-    const EXPECTED_PIN = '${EXPECTED_PIN}';
-    const DEMO_PIN = '${DEMO_PIN}';
+    const EXPECTED_HASH = '${EXPECTED_HASH}';
     let currentPin = '';
     const dots = document.querySelectorAll('.pin-dot');
     const overlay = document.getElementById('pin-overlay');
@@ -288,11 +307,11 @@ function buildHtml() {
     function handleInput(val) {
         if (val === 'clear') currentPin = '';
         else if (val === 'del') currentPin = currentPin.slice(0, -1);
-        else if (currentPin.length < 4) currentPin += val;
+        else if (currentPin.length < 6) currentPin += val;
         
         updateDisplay();
-        if (currentPin.length === 4) {
-            if (currentPin === EXPECTED_PIN || currentPin === DEMO_PIN) {
+        if (currentPin.length === 6) {
+            if (simpleHash(currentPin) === EXPECTED_HASH) {
                 sessionStorage.setItem('ct-land-auth', 'true');
                 unlock();
             } else {
