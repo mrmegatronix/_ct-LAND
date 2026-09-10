@@ -119,7 +119,7 @@ function buildHtml() {
         if (!fs.statSync(fullPath).isDirectory() || ignoreDirs.includes(d) || d === '_ct-LAND' || d === 'ndm-LAND') return false;
         
         const lower = d.toLowerCase();
-        if (lower.includes('ct') || lower === '_ctos-beta') {
+        if (lower.includes('ct') || lower === '_ctos-beta' || lower.includes('nzage')) {
             return true;
         }
         return false;
@@ -127,17 +127,19 @@ function buildHtml() {
 
     // Grouping
     const matrixModules = ['_ct-MMR', '_ct-ACE', '_ct-TRIP', '_ct-TIK', '_ct-wea1'];
-    const ctosModules = ['_ct-CLOCK', '_ctos-beta'];
+    const leftExtra = ['_ct-FIR'];
+    const ctosModules = ['_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_ct-MERCH', '_ct-NZAGE2', '_nzagev', '_NZAGEV'];
     
     let matrixHtml = '';
     if (ctRepos.includes('_ct-MATRIX')) {
         const validSubRepos = matrixModules.filter(r => ctRepos.includes(r));
-        matrixHtml = generateRepoCard('_ct-MATRIX', 'blue', 'blue', 'layout', validSubRepos);
+        matrixHtml += generateRepoCard('_ct-MATRIX', 'blue', 'blue', 'layout', validSubRepos);
     }
+    matrixHtml += ctRepos.filter(r => leftExtra.includes(r)).map(repo => generateRepoCard(repo, 'blue', 'blue', 'folder')).join('');
     
     const ctosHtml = ctRepos.filter(r => ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'gold', 'gold', 'server')).join('');
     
-    const excludeFromOther = [...matrixModules, '_ct-MATRIX', ...ctosModules];
+    const excludeFromOther = [...matrixModules, '_ct-MATRIX', ...leftExtra, ...ctosModules];
     const otherHtml = ctRepos.filter(r => !excludeFromOther.includes(r)).map(repo => generateRepoCard(repo, 'cyan', 'cyan', 'folder-minus')).join('');
 
     const template = `<!DOCTYPE html>
