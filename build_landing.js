@@ -46,25 +46,18 @@ function getPreviewImage(repoPath, repoName) {
     return null;
 }
 
-function generateRepoCard(repo, borderColor, titleColor, icon) {
-    const repoDir = path.join(workspaceDir, repo);
-    const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
-    if (htmlFiles.length === 0) return '';
-    
-    const previewImg = getPreviewImage(repoDir, repo);
-    const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${repo} preview" onerror="this.style.display='none'"/>` : '';
-    
-    const linksHtml = htmlFiles.map(f => {
+function generateLinksHtml(repoName, htmlFiles) {
+    return htmlFiles.map(f => {
         let label = f;
         let fileIcon = 'file';
-        if (f === 'index.html' && repo === '_ctos-beta') { label = 'CTOS Beta App'; fileIcon = 'smartphone'; }
+        if (f === 'index.html' && repoName === '_ctos-beta') { label = 'CTOS Beta App'; fileIcon = 'smartphone'; }
         else if (f === 'postermaker.html') { label = 'A4 Poster Maker'; fileIcon = 'printer'; }
         else if (f === 'files.html') { label = 'File Browser'; fileIcon = 'folder-tree'; }
         else if (f === 'masteradmin.html') { label = 'Master TV Admin'; fileIcon = 'crown'; }
         else if (f === 'index.html') { label = 'Live Display/Index'; fileIcon = 'tv'; }
         
-        const ghUrl = `../${repo}/${f}`;
-        const absoluteUrl = `https://mrmegatronix.github.io/${repo}/${f}`;
+        const ghUrl = `../${repoName}/${f}`;
+        const absoluteUrl = `https://mrmegatronix.github.io/${repoName}/${f}`;
         const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(absoluteUrl)}`;
         return `<li style="display:flex; align-items:center; gap: 8px;">
             <a href="${ghUrl}" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="${fileIcon}"></i> ${label}</a>
@@ -73,6 +66,30 @@ function generateRepoCard(repo, borderColor, titleColor, icon) {
             </a>
         </li>`;
     }).join('');
+}
+
+function generateRepoCard(repo, borderColor, titleColor, icon, subRepos = []) {
+    const repoDir = path.join(workspaceDir, repo);
+    const htmlFiles = findHtmlFiles(repoDir, repo, repoDir);
+    
+    const previewImg = getPreviewImage(repoDir, repo);
+    const previewHtml = previewImg ? `<img src="${previewImg}" class="repo-preview-img" alt="${repo} preview" onerror="this.style.display='none'"/>` : '';
+    
+    let linksHtml = '';
+    if (htmlFiles.length > 0) {
+        linksHtml += generateLinksHtml(repo, htmlFiles);
+    }
+    
+    for (const sub of subRepos) {
+        const subDir = path.join(workspaceDir, sub);
+        const subFiles = findHtmlFiles(subDir, sub, subDir);
+        if (subFiles.length > 0) {
+            linksHtml += `<li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--${titleColor}); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">${sub}</li>`;
+            linksHtml += generateLinksHtml(sub, subFiles);
+        }
+    }
+    
+    if (!linksHtml) return '';
 
     return `
     <div class="repo-card border-${borderColor}" data-repo="${repo}">
@@ -89,16 +106,6 @@ function generateRepoCard(repo, borderColor, titleColor, icon) {
             </ul>
         </details>
     </div>`;
-}
-
-function simpleHash(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash;
-    }
-    return hash.toString();
 }
 
 function buildHtml() {
@@ -119,14 +126,19 @@ function buildHtml() {
     }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
     // Grouping
-    const matrixModules = ['_ct-MMR', '_ct-ACE', '_ct-TRIP', '_ct-TIK', '_ct-wea1', '_ct-MATRIX'];
+    const matrixModules = ['_ct-MMR', '_ct-ACE', '_ct-TRIP', '_ct-TIK', '_ct-wea1'];
     const ctosModules = ['_ct-CLOCK', '_ctos-beta'];
-    const otherKnown = ['_ct-SOC', '_ct-MERCH'];
     
-    const matrixHtml = ctRepos.filter(r => matrixModules.includes(r)).map(repo => generateRepoCard(repo, 'blue', 'blue', 'layout')).join('');
+    let matrixHtml = '';
+    if (ctRepos.includes('_ct-MATRIX')) {
+        const validSubRepos = matrixModules.filter(r => ctRepos.includes(r));
+        matrixHtml = generateRepoCard('_ct-MATRIX', 'blue', 'blue', 'layout', validSubRepos);
+    }
+    
     const ctosHtml = ctRepos.filter(r => ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'gold', 'gold', 'server')).join('');
     
-    const otherHtml = ctRepos.filter(r => !matrixModules.includes(r) && !ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'cyan', 'cyan', 'folder-minus')).join('');
+    const excludeFromOther = [...matrixModules, '_ct-MATRIX', ...ctosModules];
+    const otherHtml = ctRepos.filter(r => !excludeFromOther.includes(r)).map(repo => generateRepoCard(repo, 'cyan', 'cyan', 'folder-minus')).join('');
 
     const template = `<!DOCTYPE html>
 <html lang="en">
