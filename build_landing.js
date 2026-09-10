@@ -244,6 +244,8 @@ function buildHtml() {
       <div class="header-subtitle">Venue Operation Controls</div>
     </div>
     <div class="manage-actions">
+        <button id="expand-all-btn" class="manage-btn"><i data-lucide="chevron-down" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Expand</button>
+        <button id="collapse-all-btn" class="manage-btn"><i data-lucide="chevron-up" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Collapse</button>
         <button id="manage-links-btn" class="manage-btn"><i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links</button>
         <button id="download-archive-btn" class="manage-btn" style="display:none; border-color: #ef4444; color: #ef4444;"><i data-lucide="download" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Save Changes</button>
         <div class="pi-status" id="pi-status" style="display: none;">
@@ -354,6 +356,12 @@ function buildHtml() {
         else if (e.key === 'Escape') handleInput('clear');
     });
 
+    
+    const expandBtn = document.getElementById('expand-all-btn');
+    const collapseBtn = document.getElementById('collapse-all-btn');
+    if(expandBtn) expandBtn.addEventListener('click', () => document.querySelectorAll('details').forEach(d => d.open = true));
+    if(collapseBtn) collapseBtn.addEventListener('click', () => document.querySelectorAll('details').forEach(d => d.open = false));
+    
     const manageBtn = document.getElementById('manage-links-btn');
     const downloadBtn = document.getElementById('download-archive-btn');
     const checkboxes = document.querySelectorAll('.repo-select-checkbox');
