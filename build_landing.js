@@ -10,7 +10,7 @@ const EXPECTED_PIN = process.env.PIN || '791355';
 const EXPECTED_HASH = simpleHash(EXPECTED_PIN);
 const DEMO_PIN = process.env.DEMO_PIN || '0001';
 
-const ignoreDirs = ['node_modules', '.git', '.vscode', '.github', '_UNUSED', 'extra-slides', 'images', 'scratch', '_old', 'z_OLD', '_menus', '_backgrounds', '.venv', 'venv'];
+const ignoreDirs = ['dist', 'public', 'node_modules', '.git', '.vscode', '.github', '_UNUSED', 'extra-slides', 'images', 'scratch', '_old', 'z_OLD', '_menus', '_backgrounds', '.venv', 'venv'];
 
 function findHtmlFiles(dir, repoName, baseDir, fileList = []) {
     if (!fs.existsSync(dir)) return fileList;
@@ -57,7 +57,8 @@ function generateRepoCard(repo, borderColor, titleColor, icon) {
     const linksHtml = htmlFiles.map(f => {
         let label = f;
         let fileIcon = 'file';
-        if (f === 'postermaker.html') { label = 'A4 Poster Maker'; fileIcon = 'printer'; }
+        if (f === 'index.html' && repo === '_ctos-beta') { label = 'CTOS Beta App'; fileIcon = 'smartphone'; }
+        else if (f === 'postermaker.html') { label = 'A4 Poster Maker'; fileIcon = 'printer'; }
         else if (f === 'files.html') { label = 'File Browser'; fileIcon = 'folder-tree'; }
         else if (f === 'masteradmin.html') { label = 'Master TV Admin'; fileIcon = 'crown'; }
         else if (f === 'index.html') { label = 'Live Display/Index'; fileIcon = 'tv'; }
