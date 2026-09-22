@@ -70,6 +70,9 @@ function generateLinksHtml(repoName, htmlFiles) {
         const absoluteUrl = `https://mrmegatronix.github.io/${repoName}/${f}`;
         const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(absoluteUrl)}`;
         return `<li style="display:flex; align-items:center; gap: 8px;">
+            <span class="link-drag-handle" title="Drag to reorder" style="cursor: grab; display: flex; align-items: center; color: var(--muted); padding: 4px; user-select: none;">
+                <i data-lucide="grip-vertical" style="width: 16px; height: 16px;"></i>
+            </span>
             <a href="${ghUrl}" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="${fileIcon}"></i> ${label}</a>
             <a href="${ghUrl}" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="${qrApi}" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
@@ -123,16 +126,11 @@ function buildHtml() {
     
     const allDirs = fs.readdirSync(workspaceDir);
     
-    // Filter to ONLY CT repos (must contain ct or be _ctos-beta)
-    const ctRepos = allDirs.filter(d => {
+    // Find all repositories in workspace containing HTML files
+    const allReposWithHtml = allDirs.filter(d => {
         const fullPath = path.join(workspaceDir, d);
         if (!fs.statSync(fullPath).isDirectory() || ignoreDirs.includes(d) || d === '_ct-LAND' || d === 'ndm-LAND') return false;
-        
-        const lower = d.toLowerCase();
-        if (lower.includes('ct') || lower === '_ctos-beta' || lower.includes('nzage')) {
-            return true;
-        }
-        return false;
+        return findHtmlFiles(fullPath, d, fullPath).length > 0;
     }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
     // Grouping
@@ -141,16 +139,16 @@ function buildHtml() {
     const ctosModules = ['_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_ct-MERCH', '_ct-NZAGE2', '_nzagev', '_NZAGEV'];
     
     let matrixHtml = '';
-    if (ctRepos.includes('_ct-MATRIX')) {
-        const validSubRepos = matrixModules.filter(r => ctRepos.includes(r));
+    if (allReposWithHtml.includes('_ct-MATRIX')) {
+        const validSubRepos = matrixModules.filter(r => allReposWithHtml.includes(r));
         matrixHtml += generateRepoCard('_ct-MATRIX', 'blue', 'blue', 'layout', validSubRepos);
     }
-    matrixHtml += ctRepos.filter(r => leftExtra.includes(r)).map(repo => generateRepoCard(repo, 'blue', 'blue', 'folder')).join('');
+    matrixHtml += allReposWithHtml.filter(r => leftExtra.includes(r)).map(repo => generateRepoCard(repo, 'blue', 'blue', 'folder')).join('');
     
-    const ctosHtml = ctRepos.filter(r => ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'gold', 'gold', 'server')).join('');
+    const ctosHtml = allReposWithHtml.filter(r => ctosModules.includes(r)).map(repo => generateRepoCard(repo, 'gold', 'gold', 'server')).join('');
     
     const excludeFromOther = [...matrixModules, '_ct-MATRIX', ...leftExtra, ...ctosModules];
-    const otherHtml = ctRepos.filter(r => !excludeFromOther.includes(r)).map(repo => generateRepoCard(repo, 'cyan', 'cyan', 'folder-minus')).join('');
+    const otherHtml = allReposWithHtml.filter(r => !excludeFromOther.includes(r)).map(repo => generateRepoCard(repo, 'cyan', 'cyan', 'folder-minus')).join('');
 
     const template = `<!DOCTYPE html>
 <html lang="en">
@@ -212,10 +210,42 @@ function buildHtml() {
     .manage-btn { padding: 0.5rem 1rem; border-radius: 99px; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); cursor: pointer; font-family: 'Outfit'; font-weight: 600; font-size: 0.9rem; transition: all 0.2s; }
     .manage-btn:hover { background: rgba(255,255,255,0.1); }
     .manage-actions { display: flex; gap: 10px; align-items: center; }
+
+    #pin-overlay { position: fixed; inset: 0; background: rgba(7, 10, 19, 0.96); backdrop-filter: blur(20px); z-index: 100; display: flex; align-items: center; justify-content: center; }
+    .pin-modal { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border); border-radius: 28px; padding: 3rem; width: 380px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+    .pin-display { display: flex; gap: 1.25rem; justify-content: center; margin: 2.5rem 0; }
+    .pin-dot { width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--border); transition: all 0.2s; }
+    .pin-dot.filled { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 10px var(--gold); }
+    .pin-dot.error { background: #ef4444; border-color: #ef4444; box-shadow: 0 0 10px #ef4444; }
+    .pin-numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .pin-btn { aspect-ratio: 1.1; border-radius: 16px; border: 1px solid rgba(255,255,255,0.03); background: rgba(255,255,255,0.02); color: #fff; font-size: 1.6rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .pin-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.1); transform: translateY(-2px); }
+    .pin-btn:active { transform: scale(0.95); }
+    .pin-btn[data-val="clear"], .pin-btn[data-val="del"] { font-size: 1.1rem; color: var(--muted); }
+    
+    .pi-status { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 99px; font-size: 0.75rem; font-weight: 600; color: var(--gold); }
+    .pi-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body>
+
+  <!-- PIN Overlay -->
+  <div id="pin-overlay">
+    <div class="pin-modal">
+      <h2 style="font-family: Outfit; margin-bottom: 0.5rem; font-size: 1.8rem; font-weight: 700; color: #fff;">Access Hub</h2>
+      <p style="color: var(--muted); font-size: 0.95rem; font-weight: 500;">Enter PIN to Unlock</p>
+      <div class="pin-display">
+        <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
+      </div>
+      <div class="pin-numpad">
+        <button class="pin-btn" data-val="1">1</button><button class="pin-btn" data-val="2">2</button><button class="pin-btn" data-val="3">3</button>
+        <button class="pin-btn" data-val="4">4</button><button class="pin-btn" data-val="5">5</button><button class="pin-btn" data-val="6">6</button>
+        <button class="pin-btn" data-val="7">7</button><button class="pin-btn" data-val="8">8</button><button class="pin-btn" data-val="9">9</button>
+        <button class="pin-btn" data-val="clear"><i data-lucide="x"></i></button><button class="pin-btn" data-val="0">0</button><button class="pin-btn" data-val="del"><i data-lucide="delete"></i></button>
+      </div>
+    </div>
+  </div>
 
   <header class="header">
     <div>
@@ -227,10 +257,14 @@ function buildHtml() {
         <button id="collapse-all-btn" class="manage-btn"><i data-lucide="chevron-up" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Collapse</button>
         <button id="manage-links-btn" class="manage-btn"><i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links</button>
         <button id="download-archive-btn" class="manage-btn" style="display:none; border-color: #ef4444; color: #ef4444;"><i data-lucide="download" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Save Changes</button>
+        <div class="pi-status" id="pi-status" style="display: none;">
+          <span class="pi-dot"></span>
+          <span>Auto-Unlocked</span>
+        </div>
     </div>
   </header>
 
-  <div id="main-content">
+  <div id="main-content" style="opacity: 0; pointer-events: none; transition: opacity 0.5s;">
     
     <div class="hero-section">
         <a href="https://app.nightlifr.com/?lid=07b0c6e5-6e0f-5d91-9abb-d1b492047cd0&t=1786661576564&s=q" target="_blank" class="crowd-dj-btn">
@@ -265,6 +299,72 @@ function buildHtml() {
 
   <script>
     lucide.createIcons();
+
+    function simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return hash.toString();
+    }
+
+    const EXPECTED_HASH = '${EXPECTED_HASH}';
+    let currentPin = '';
+    const dots = document.querySelectorAll('.pin-dot');
+    const overlay = document.getElementById('pin-overlay');
+    const main = document.getElementById('main-content');
+    const piStatus = document.getElementById('pi-status');
+
+    const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '192.168.1.97';
+    const isFileProtocol = window.location.protocol === 'file:';
+
+    if (sessionStorage.getItem('ct-land-auth') === 'true' || isLocalhost || isFileProtocol) {
+        if (isLocalhost || isFileProtocol) piStatus.style.display = 'flex';
+        unlock();
+    }
+
+    function unlock() {
+        overlay.style.display = 'none';
+        main.style.opacity = '1';
+        main.style.pointerEvents = 'all';
+    }
+
+    function updateDisplay() {
+        dots.forEach((dot, i) => {
+            if (i < currentPin.length) dot.classList.add('filled');
+            else { dot.classList.remove('filled'); dot.classList.remove('error'); }
+        });
+    }
+
+    function handleInput(val) {
+        if (val === 'clear') currentPin = '';
+        else if (val === 'del') currentPin = currentPin.slice(0, -1);
+        else if (currentPin.length < 6) currentPin += val;
+        
+        updateDisplay();
+        if (currentPin.length === 6) {
+            if (simpleHash(currentPin) === EXPECTED_HASH) {
+                sessionStorage.setItem('ct-land-auth', 'true');
+                unlock();
+            } else {
+                dots.forEach(d => d.classList.add('error'));
+                setTimeout(() => { currentPin = ''; updateDisplay(); }, 500);
+            }
+        }
+    }
+
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => handleInput(e.currentTarget.getAttribute('data-val')));
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (overlay.style.display === 'none') return;
+        if (e.key >= '0' && e.key <= '9') handleInput(e.key);
+        else if (e.key === 'Backspace') handleInput('del');
+        else if (e.key === 'Escape') handleInput('clear');
+    });
     
     const expandBtn = document.getElementById('expand-all-btn');
     const collapseBtn = document.getElementById('collapse-all-btn');
@@ -343,6 +443,7 @@ function buildHtml() {
         
         // Change cursor for draggable handles
         document.querySelectorAll('.repo-title').forEach(el => el.style.cursor = 'grab');
+
         // Load saved link layouts
         document.querySelectorAll('.repo-card').forEach(card => {
             const repo = card.getAttribute('data-repo');
@@ -358,16 +459,20 @@ function buildHtml() {
             new Sortable(list, {
                 group: 'shared-links',
                 animation: 150,
+                handle: '.link-drag-handle', // drag via dedicated handle
                 onEnd: function (evt) {
-                    const card = evt.to.closest('.repo-card');
-                    if (card) {
-                        const repo = card.getAttribute('data-repo');
-                        localStorage.setItem('ct-land-links-' + repo, evt.to.innerHTML);
+                    const fromCard = evt.from.closest('.repo-card');
+                    const toCard = evt.to.closest('.repo-card');
+                    if (fromCard) {
+                        const fromRepo = fromCard.getAttribute('data-repo');
+                        localStorage.setItem('ct-land-links-' + fromRepo, evt.from.innerHTML);
+                    }
+                    if (toCard && toCard !== fromCard) {
+                        const toRepo = toCard.getAttribute('data-repo');
+                        localStorage.setItem('ct-land-links-' + toRepo, evt.to.innerHTML);
                     }
                 }
             });
-            // Change cursor for links
-            list.querySelectorAll('li').forEach(li => li.style.cursor = 'grab');
         });
     
     }
