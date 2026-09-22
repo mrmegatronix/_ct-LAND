@@ -74,6 +74,7 @@
     .pi-status { display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.9rem; background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 99px; font-size: 0.75rem; font-weight: 600; color: var(--gold); }
     .pi-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 10px #10b981; }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 </head>
 <body>
 
@@ -100,6 +101,8 @@
       <div class="header-subtitle">Venue Operation Controls</div>
     </div>
     <div class="manage-actions">
+        <button id="expand-all-btn" class="manage-btn"><i data-lucide="chevron-down" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Expand</button>
+        <button id="collapse-all-btn" class="manage-btn"><i data-lucide="chevron-up" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Collapse</button>
         <button id="manage-links-btn" class="manage-btn"><i data-lucide="edit-2" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Manage Links</button>
         <button id="download-archive-btn" class="manage-btn" style="display:none; border-color: #ef4444; color: #ef4444;"><i data-lucide="download" style="width:14px;height:14px;margin-right:4px;vertical-align:text-bottom;"></i> Save Changes</button>
         <div class="pi-status" id="pi-status" style="display: none;">
@@ -123,35 +126,6 @@
         <div class="column-header" style="color: var(--blue);"><i data-lucide="layout"></i> CT-Matrix & Modules</div>
         <div class="column-content">
           
-    <div class="repo-card border-blue" data-repo="_ct-ACE">
-        <details>
-            <summary class="repo-title text-blue">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-ACE" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="layout"></i> _ct-ACE
-                </div>
-            </summary>
-            <img src="../_ct-ACE/_preview/cover.jpg" class="repo-preview-img" alt="_ct-ACE preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-ACE/admin.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> admin.html</a>
-            <a href="../_ct-ACE/admin.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-ACE%2Fadmin.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li><li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-ACE/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
-            <a href="../_ct-ACE/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-ACE%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li><li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-ACE/preview.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> preview.html</a>
-            <a href="../_ct-ACE/preview.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-ACE%2Fpreview.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li>
-            </ul>
-        </details>
-    </div>
     <div class="repo-card border-blue" data-repo="_ct-MATRIX">
         <details>
             <summary class="repo-title text-blue">
@@ -227,21 +201,7 @@
             <a href="../_ct-MATRIX/test/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-MATRIX%2Ftest%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
-        </li>
-            </ul>
-        </details>
-    </div>
-    <div class="repo-card border-blue" data-repo="_ct-MMR">
-        <details>
-            <summary class="repo-title text-blue">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-MMR" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="layout"></i> _ct-MMR
-                </div>
-            </summary>
-            <img src="../_ct-MMR/_preview/cover.jpg" class="repo-preview-img" alt="_ct-MMR preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-MMR</li><li style="display:flex; align-items:center; gap: 8px;">
             <a href="../_ct-MMR/admin.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> admin.html</a>
             <a href="../_ct-MMR/admin.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-MMR%2Fadmin.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
@@ -255,6 +215,11 @@
             <a href="../_ct-MMR/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
             <a href="../_ct-MMR/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-MMR%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-MMR/preview.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> preview.html</a>
+            <a href="../_ct-MMR/preview.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-MMR%2Fpreview.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
         </li><li style="display:flex; align-items:center; gap: 8px;">
             <a href="../_ct-MMR/remote.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> remote.html</a>
@@ -276,21 +241,27 @@
             <a href="../_ct-MMR/waving_animation.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-MMR%2Fwaving_animation.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
-        </li>
-            </ul>
-        </details>
-    </div>
-    <div class="repo-card border-blue" data-repo="_ct-TIK">
-        <details>
-            <summary class="repo-title text-blue">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-TIK" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="layout"></i> _ct-TIK
-                </div>
-            </summary>
-            <img src="../_ct-TIK/_preview/cover.jpg" class="repo-preview-img" alt="_ct-TIK preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-ACE</li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-ACE/admin.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> admin.html</a>
+            <a href="../_ct-ACE/admin.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-ACE%2Fadmin.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-ACE/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-ACE/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-ACE%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-ACE/preview.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> preview.html</a>
+            <a href="../_ct-ACE/preview.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-ACE%2Fpreview.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-TRIP</li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-TRIP/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-TRIP/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-TRIP%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-TIK</li><li style="display:flex; align-items:center; gap: 8px;">
             <a href="../_ct-TIK/draft.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> draft.html</a>
             <a href="../_ct-TIK/draft.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-TIK%2Fdraft.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
@@ -300,43 +271,49 @@
             <a href="../_ct-TIK/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-TIK%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
-        </li>
-            </ul>
-        </details>
-    </div>
-    <div class="repo-card border-blue" data-repo="_ct-TRIP">
-        <details>
-            <summary class="repo-title text-blue">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-TRIP" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="layout"></i> _ct-TRIP
-                </div>
-            </summary>
-            <img src="../_ct-TRIP/_preview/cover.jpg" class="repo-preview-img" alt="_ct-TRIP preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-TRIP/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
-            <a href="../_ct-TRIP/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-TRIP%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-FACEB</li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-FACEB/draft.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> draft.html</a>
+            <a href="../_ct-FACEB/draft.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-FACEB%2Fdraft.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-FACEB/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-FACEB/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-FACEB%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-INSTA</li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-INSTA/draft.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> draft.html</a>
+            <a href="../_ct-INSTA/draft.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-INSTA%2Fdraft.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-INSTA/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-INSTA/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-INSTA%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="margin-top: 16px; margin-bottom: 4px; font-size: 0.8rem; font-weight: 700; color: var(--blue); text-transform: uppercase; letter-spacing: 1px; padding-left: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 4px;">_ct-wea1</li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-wea1/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-wea1/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-wea1%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
         </li>
             </ul>
         </details>
     </div>
-    <div class="repo-card border-blue" data-repo="_ct-wea1">
+    <div class="repo-card border-blue" data-repo="_ct-FIR">
         <details>
             <summary class="repo-title text-blue">
                 <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-wea1" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="layout"></i> _ct-wea1
+                    <input type="checkbox" class="repo-select-checkbox" value="_ct-FIR" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="folder"></i> _ct-FIR
                 </div>
             </summary>
-            <img src="../_ct-wea1/_preview/cover.jpg" class="repo-preview-img" alt="_ct-wea1 preview" onerror="this.style.display='none'"/>
+            <img src="../_ct-FIR/_preview/cover.jpg" class="repo-preview-img" alt="_ct-FIR preview" onerror="this.style.display='none'"/>
             <ul class="repo-links">
                 <li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-wea1/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
-            <a href="../_ct-wea1/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-wea1%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            <a href="../_ct-FIR/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-FIR/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-FIR%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
         </li>
             </ul>
@@ -373,6 +350,49 @@
             </ul>
         </details>
     </div>
+    <div class="repo-card border-gold" data-repo="_ct-NZAGE2">
+        <details>
+            <summary class="repo-title text-gold">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <input type="checkbox" class="repo-select-checkbox" value="_ct-NZAGE2" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="server"></i> _ct-NZAGE2
+                </div>
+            </summary>
+            <img src="../_ct-NZAGE2/_preview/cover.jpg" class="repo-preview-img" alt="_ct-NZAGE2 preview" onerror="this.style.display='none'"/>
+            <ul class="repo-links">
+                <li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-NZAGE2/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-NZAGE2/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-NZAGE2%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li>
+            </ul>
+        </details>
+    </div>
+    <div class="repo-card border-gold" data-repo="_ct-SOC">
+        <details>
+            <summary class="repo-title text-gold">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <input type="checkbox" class="repo-select-checkbox" value="_ct-SOC" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="server"></i> _ct-SOC
+                </div>
+            </summary>
+            <img src="../_ct-SOC/_preview/cover.jpg" class="repo-preview-img" alt="_ct-SOC preview" onerror="this.style.display='none'"/>
+            <ul class="repo-links">
+                <li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-SOC/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-SOC/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-SOC%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li><li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-SOC/template-dash/soc-templates.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> template-dash/soc-templates.html</a>
+            <a href="../_ct-SOC/template-dash/soc-templates.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-SOC%2Ftemplate-dash%2Fsoc-templates.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li>
+            </ul>
+        </details>
+    </div>
     <div class="repo-card border-gold" data-repo="_ctos-beta">
         <details>
             <summary class="repo-title text-gold">
@@ -392,6 +412,44 @@
             </ul>
         </details>
     </div>
+    <div class="repo-card border-gold" data-repo="_NZAGEV">
+        <details>
+            <summary class="repo-title text-gold">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <input type="checkbox" class="repo-select-checkbox" value="_NZAGEV" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="server"></i> _NZAGEV
+                </div>
+            </summary>
+            <img src="../_NZAGEV/_preview/cover.jpg" class="repo-preview-img" alt="_NZAGEV preview" onerror="this.style.display='none'"/>
+            <ul class="repo-links">
+                <li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_NZAGEV/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_NZAGEV/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_NZAGEV%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li>
+            </ul>
+        </details>
+    </div>
+    <div class="repo-card border-gold" data-repo="_nzagev">
+        <details>
+            <summary class="repo-title text-gold">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <input type="checkbox" class="repo-select-checkbox" value="_nzagev" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="server"></i> _nzagev
+                </div>
+            </summary>
+            <img src="../_nzagev/_preview/cover.jpg" class="repo-preview-img" alt="_nzagev preview" onerror="this.style.display='none'"/>
+            <ul class="repo-links">
+                <li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_nzagev/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_nzagev/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_nzagev%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li>
+            </ul>
+        </details>
+    </div>
         </div>
       </div>
 
@@ -399,6 +457,25 @@
         <div class="column-header" style="color: var(--cyan);"><i data-lucide="folder-minus"></i> CT-SOC & Other Apps</div>
         <div class="column-content">
           
+    <div class="repo-card border-cyan" data-repo="_ct-AVATAR">
+        <details>
+            <summary class="repo-title text-cyan">
+                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
+                    <input type="checkbox" class="repo-select-checkbox" value="_ct-AVATAR" style="display:none; transform: scale(1.5); margin-right: 10px;" />
+                    <i data-lucide="folder-minus"></i> _ct-AVATAR
+                </div>
+            </summary>
+            <img src="../_ct-AVATAR/_preview/cover.jpg" class="repo-preview-img" alt="_ct-AVATAR preview" onerror="this.style.display='none'"/>
+            <ul class="repo-links">
+                <li style="display:flex; align-items:center; gap: 8px;">
+            <a href="../_ct-AVATAR/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
+            <a href="../_ct-AVATAR/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-AVATAR%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
+            </a>
+        </li>
+            </ul>
+        </details>
+    </div>
     <div class="repo-card border-cyan" data-repo="_ct-BOOT">
         <details>
             <summary class="repo-title text-cyan">
@@ -471,25 +548,6 @@
             <a href="../_ct-digi-signage/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
             <a href="../_ct-digi-signage/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-digi-signage%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li>
-            </ul>
-        </details>
-    </div>
-    <div class="repo-card border-cyan" data-repo="_ct-FIR">
-        <details>
-            <summary class="repo-title text-cyan">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-FIR" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="folder-minus"></i> _ct-FIR
-                </div>
-            </summary>
-            <img src="../_ct-FIR/_preview/cover.jpg" class="repo-preview-img" alt="_ct-FIR preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-FIR/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
-            <a href="../_ct-FIR/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-FIR%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
         </li>
             </ul>
@@ -645,25 +703,6 @@
             </ul>
         </details>
     </div>
-    <div class="repo-card border-cyan" data-repo="_ct-NZAGE2">
-        <details>
-            <summary class="repo-title text-cyan">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-NZAGE2" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="folder-minus"></i> _ct-NZAGE2
-                </div>
-            </summary>
-            <img src="../_ct-NZAGE2/_preview/cover.jpg" class="repo-preview-img" alt="_ct-NZAGE2 preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-NZAGE2/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
-            <a href="../_ct-NZAGE2/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-NZAGE2%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li>
-            </ul>
-        </details>
-    </div>
     <div class="repo-card border-cyan" data-repo="_ct-POS">
         <details>
             <summary class="repo-title text-cyan">
@@ -794,30 +833,6 @@
             <a href="../_ct-slides-logo/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
             <a href="../_ct-slides-logo/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-slides-logo%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li>
-            </ul>
-        </details>
-    </div>
-    <div class="repo-card border-cyan" data-repo="_ct-SOC">
-        <details>
-            <summary class="repo-title text-cyan">
-                <div style="display:flex; align-items:center; gap:0.5rem; width:100%;">
-                    <input type="checkbox" class="repo-select-checkbox" value="_ct-SOC" style="display:none; transform: scale(1.5); margin-right: 10px;" />
-                    <i data-lucide="folder-minus"></i> _ct-SOC
-                </div>
-            </summary>
-            <img src="../_ct-SOC/_preview/cover.jpg" class="repo-preview-img" alt="_ct-SOC preview" onerror="this.style.display='none'"/>
-            <ul class="repo-links">
-                <li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-SOC/index.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="tv"></i> Live Display/Index</a>
-            <a href="../_ct-SOC/index.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-SOC%2Findex.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
-            </a>
-        </li><li style="display:flex; align-items:center; gap: 8px;">
-            <a href="../_ct-SOC/template-dash/soc-templates.html" target="_blank" class="mod-link" style="flex:1;"><i data-lucide="file"></i> template-dash/soc-templates.html</a>
-            <a href="../_ct-SOC/template-dash/soc-templates.html" target="_blank" title="Scan or Click to open in new window" style="display:block; flex-shrink:0; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
-               <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https%3A%2F%2Fmrmegatronix.github.io%2F_ct-SOC%2Ftemplate-dash%2Fsoc-templates.html" style="width: 44px; height: 44px; border-radius: 8px; background: white; padding: 2px;" alt="QR Code" />
             </a>
         </li>
             </ul>
@@ -1082,6 +1097,12 @@
         else if (e.key === 'Escape') handleInput('clear');
     });
 
+    
+    const expandBtn = document.getElementById('expand-all-btn');
+    const collapseBtn = document.getElementById('collapse-all-btn');
+    if(expandBtn) expandBtn.addEventListener('click', () => document.querySelectorAll('details').forEach(d => d.open = true));
+    if(collapseBtn) collapseBtn.addEventListener('click', () => document.querySelectorAll('details').forEach(d => d.open = false));
+    
     const manageBtn = document.getElementById('manage-links-btn');
     const downloadBtn = document.getElementById('download-archive-btn');
     const checkboxes = document.querySelectorAll('.repo-select-checkbox');
@@ -1115,6 +1136,77 @@
         manageBtn.click();
         checkboxes.forEach(cb => cb.checked = false);
     });
-  </script>
+  
+    // Drag and Drop Logic
+    function initDragAndDrop() {
+        // Load saved card layout
+        const savedLayout = localStorage.getItem('ct-land-card-layout-' + window.location.pathname);
+        if (savedLayout) {
+            try {
+                const layout = JSON.parse(savedLayout);
+                const columns = document.querySelectorAll('.column-content');
+                Object.keys(layout).forEach(colIndex => {
+                    const col = columns[colIndex];
+                    if (col) {
+                        layout[colIndex].forEach(repo => {
+                            const card = document.querySelector('.repo-card[data-repo="' + repo + '"]');
+                            if (card) col.appendChild(card);
+                        });
+                    }
+                });
+            } catch (e) { console.error('Error loading layout', e); }
+        }
+
+        // Initialize Sortable for columns (Cards)
+        document.querySelectorAll('.column-content').forEach((col, index) => {
+            new Sortable(col, {
+                group: 'shared-columns',
+                animation: 150,
+                handle: '.repo-title', // drag by header
+                onEnd: function () {
+                    const layout = {};
+                    document.querySelectorAll('.column-content').forEach((c, i) => {
+                        layout[i] = Array.from(c.querySelectorAll('.repo-card')).map(card => card.getAttribute('data-repo'));
+                    });
+                    localStorage.setItem('ct-land-card-layout-' + window.location.pathname, JSON.stringify(layout));
+                }
+            });
+        });
+        
+        // Change cursor for draggable handles
+        document.querySelectorAll('.repo-title').forEach(el => el.style.cursor = 'grab');
+        // Load saved link layouts
+        document.querySelectorAll('.repo-card').forEach(card => {
+            const repo = card.getAttribute('data-repo');
+            const savedLinks = localStorage.getItem('ct-land-links-' + repo);
+            if (savedLinks) {
+                const list = card.querySelector('.repo-links');
+                if (list) list.innerHTML = savedLinks;
+            }
+        });
+
+        // Initialize Sortable for links inside cards
+        document.querySelectorAll('.repo-links').forEach((list) => {
+            new Sortable(list, {
+                group: 'shared-links',
+                animation: 150,
+                onEnd: function (evt) {
+                    const card = evt.to.closest('.repo-card');
+                    if (card) {
+                        const repo = card.getAttribute('data-repo');
+                        localStorage.setItem('ct-land-links-' + repo, evt.to.innerHTML);
+                    }
+                }
+            });
+            // Change cursor for links
+            list.querySelectorAll('li').forEach(li => li.style.cursor = 'grab');
+        });
+    
+    }
+    
+    // Call after DOM is ready
+    setTimeout(initDragAndDrop, 100);
+    
+</script>
 </body>
 </html>

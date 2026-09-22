@@ -5,6 +5,16 @@ require('dotenv').config();
 const workspaceDir = path.resolve(__dirname, '..');
 const outputFile = path.join(__dirname, 'index.html');
 
+function simpleHash(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return hash.toString();
+}
+
 // PIN configurations
 const EXPECTED_PIN = process.env.PIN || '791355';
 const EXPECTED_HASH = simpleHash(EXPECTED_PIN);
@@ -126,7 +136,7 @@ function buildHtml() {
     }).sort((a, b) => a.localeCompare(b, undefined, {sensitivity: 'base'}));
 
     // Grouping
-    const matrixModules = ['_ct-MMR', '_ct-ACE', '_ct-TRIP', '_ct-TIK', '_ct-wea1'];
+    const matrixModules = ['_ct-MMR', '_ct-ACE', '_ct-TRIP', '_ct-TIK', '_ct-FACEB', '_ct-INSTA', '_ct-wea1'];
     const leftExtra = ['_ct-FIR'];
     const ctosModules = ['_ct-CLOCK', '_ctos-beta', '_ct-SOC', '_ct-MERCH', '_ct-NZAGE2', '_nzagev', '_NZAGEV'];
     
@@ -409,7 +419,7 @@ function buildHtml() {
                     const col = columns[colIndex];
                     if (col) {
                         layout[colIndex].forEach(repo => {
-                            const card = document.querySelector(`.repo-card[data-repo="${repo}"]`);
+                            const card = document.querySelector('.repo-card[data-repo="' + repo + '"]');
                             if (card) col.appendChild(card);
                         });
                     }
